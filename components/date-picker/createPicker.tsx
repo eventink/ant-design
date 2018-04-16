@@ -9,7 +9,7 @@ import warning from '../_util/warning';
 import interopDefault from '../_util/interopDefault';
 
 export interface PickerProps {
-  value?: moment.Moment;
+  value?: moment.Moment | moment.Moment[];
   prefixCls: string;
 }
 
@@ -26,11 +26,10 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     constructor(props: any) {
       super(props);
       const value = props.value || props.defaultValue;
-      if (value && !interopDefault(moment).isMoment(value)) {
-        throw new Error(
-          'The value/defaultValue of DatePicker or MonthPicker must be ' +
-          'a moment object after `antd@2.0`, see: https://u.ant.design/date-picker-value',
-        );
+      if (props.multiple) {
+        value.forEach((singleValue: moment.Moment) => this.checkValue(singleValue));
+      } else {
+        this.checkValue(value);
       }
       this.state = {
         value,
@@ -44,6 +43,15 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           value: nextProps.value,
           showDate: nextProps.value,
         });
+      }
+    }
+
+    checkValue = (value: moment.Moment) => {
+      if (value && !interopDefault(moment).isMoment(value)) {
+        throw new Error(
+          'The value/defaultValue of DatePicker or MonthPicker must be ' +
+          'a moment object or an array of moment objects after `antd@2.0`, see: https://u.ant.design/date-picker-value',
+        );
       }
     }
 
@@ -92,7 +100,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     render() {
       const { value, showDate } = this.state;
       const props = omit(this.props, ['onChange']);
-      const { prefixCls, locale, localeCode } = props;
+      const { prefixCls, locale, localeCode, multiple } = props;
 
       const placeholder = ('placeholder' in props)
         ? props.placeholder : locale.lang.placeholder;
@@ -105,7 +113,11 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       });
 
       if (value && localeCode) {
-        value.locale(localeCode);
+        if (multiple) {
+          value.foreach((singleValue: moment.Moment) => locale(singleValue));
+        } else {
+          value.locale(localeCode);
+        }
       }
 
       let pickerProps: Object = {};
