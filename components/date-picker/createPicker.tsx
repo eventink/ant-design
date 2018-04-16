@@ -114,7 +114,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
 
       if (value && localeCode) {
         if (multiple) {
-          value.foreach((singleValue: moment.Moment) => locale(singleValue));
+          value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
         } else {
           value.locale(localeCode);
         }
@@ -156,6 +156,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           renderFooter={this.renderFooter}
           onPanelChange={props.onPanelChange}
           onChange={this.handleCalendarChange}
+          multiple={multiple}
           value={showDate}
         />
       );
@@ -168,13 +169,21 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         />
       ) : null;
 
-      const input = ({ value: inputValue }: { value: moment.Moment | null }) => (
+      let inputValue = '';
+
+      if (multiple) {
+        inputValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
+      } else {
+        inputValue = value.format(props.format);
+      }
+
+      const input = () => (
         <div>
           <input
             ref={this.saveInput}
             disabled={props.disabled}
             readOnly
-            value={(inputValue && inputValue.format(props.format)) || ''}
+            value={inputValue}
             placeholder={placeholder}
             className={props.pickerInputClass}
           />
