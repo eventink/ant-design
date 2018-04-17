@@ -171,10 +171,12 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
 
       let inputValue = '';
 
-      if (multiple) {
-        inputValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
-      } else {
-        inputValue = value.format(props.format);
+      if (value) {
+        if (multiple) {
+          inputValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
+        } else {
+          inputValue = value.format(props.format);
+        }
       }
 
       const input = () => (
