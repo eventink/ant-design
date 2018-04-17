@@ -26,7 +26,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     constructor(props: any) {
       super(props);
       const value = props.value || props.defaultValue;
-      if (props.multiple) {
+      if (props.multiple && value && value.length) {
         value.forEach((singleValue: moment.Moment) => this.checkValue(singleValue));
       } else {
         this.checkValue(value);
@@ -70,7 +70,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       this.handleChange(null);
     }
 
-    handleChange = (value: moment.Moment | null) => {
+    handleChange = (value: any) => {
       const props = this.props;
       if (!('value' in props)) {
         this.setState({
@@ -78,10 +78,18 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           showDate: value,
         });
       }
-      props.onChange(value, (value && value.format(props.format)) || '');
+      if (props.multiple) {
+        let formattedValue;
+        if (value && value.length) {
+          formattedValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
+        }
+        props.onChange(value, formattedValue);
+      } else {
+        props.onChange(value, (value && value.format(props.format)) || '');
+      }
     }
 
-    handleCalendarChange = (value: moment.Moment) => {
+    handleCalendarChange = (value: moment.Moment | moment.Moment[]) => {
       this.setState({ showDate: value });
     }
 
@@ -113,7 +121,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       });
 
       if (value && localeCode) {
-        if (multiple) {
+        if (multiple && value.length) {
           value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
         } else {
           value.locale(localeCode);
@@ -144,7 +152,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           disabledTime={disabledTime}
           locale={locale.lang}
           timePicker={props.timePicker}
-          defaultValue={props.defaultPickerValue || interopDefault(moment)()}
+          defaultValue={props.defaultPickerValue || multiple ? [interopDefault(moment)()] : interopDefault(moment)()}
           dateInputPlaceholder={placeholder}
           prefixCls={prefixCls}
           className={calendarClassName}
