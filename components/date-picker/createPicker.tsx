@@ -152,7 +152,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           disabledTime={disabledTime}
           locale={locale.lang}
           timePicker={props.timePicker}
-          defaultValue={props.defaultPickerValue || multiple ? [interopDefault(moment)()] : interopDefault(moment)()}
+          defaultValue={props.defaultPickerValue || (multiple ? [interopDefault(moment)()] : interopDefault(moment)())}
           dateInputPlaceholder={placeholder}
           prefixCls={prefixCls}
           className={calendarClassName}
