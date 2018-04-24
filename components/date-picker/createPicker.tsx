@@ -9,7 +9,7 @@ import warning from '../_util/warning';
 import interopDefault from '../_util/interopDefault';
 
 export interface PickerProps {
-  value?: moment.Moment;
+  value?: moment.Moment | moment.Moment[];
   prefixCls: string;
 }
 
@@ -26,11 +26,10 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     constructor(props: any) {
       super(props);
       const value = props.value || props.defaultValue;
-      if (value && !interopDefault(moment).isMoment(value)) {
-        throw new Error(
-          'The value/defaultValue of DatePicker or MonthPicker must be ' +
-          'a moment object after `antd@2.0`, see: https://u.ant.design/date-picker-value',
-        );
+      if (props.multiple && value && value.length) {
+        value.forEach((singleValue: moment.Moment) => this.checkValue(singleValue));
+      } else {
+        this.checkValue(value);
       }
       this.state = {
         value,
@@ -44,6 +43,15 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           value: nextProps.value,
           showDate: nextProps.value,
         });
+      }
+    }
+
+    checkValue = (value: moment.Moment) => {
+      if (value && !interopDefault(moment).isMoment(value)) {
+        throw new Error(
+          'The value/defaultValue of DatePicker or MonthPicker must be ' +
+          'a moment object or an array of moment objects after `antd@2.0`, see: https://u.ant.design/date-picker-value',
+        );
       }
     }
 
@@ -62,7 +70,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       this.handleChange(null);
     }
 
-    handleChange = (value: moment.Moment | null) => {
+    handleChange = (value: any) => {
       const props = this.props;
       if (!('value' in props)) {
         this.setState({
@@ -70,10 +78,18 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           showDate: value,
         });
       }
-      props.onChange(value, (value && value.format(props.format)) || '');
+      if (props.multiple) {
+        let formattedValue;
+        if (value && value.length) {
+          formattedValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
+        }
+        props.onChange(value, formattedValue);
+      } else {
+        props.onChange(value, (value && value.format(props.format)) || '');
+      }
     }
 
-    handleCalendarChange = (value: moment.Moment) => {
+    handleCalendarChange = (value: moment.Moment | moment.Moment[]) => {
       this.setState({ showDate: value });
     }
 
@@ -92,7 +108,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     render() {
       const { value, showDate } = this.state;
       const props = omit(this.props, ['onChange']);
-      const { prefixCls, locale, localeCode } = props;
+      const { prefixCls, locale, localeCode, multiple, selectWeeks, selectMonths } = props;
 
       const placeholder = ('placeholder' in props)
         ? props.placeholder : locale.lang.placeholder;
@@ -105,7 +121,11 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       });
 
       if (value && localeCode) {
-        value.locale(localeCode);
+        if (multiple && value.length) {
+          value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
+        } else {
+          value.locale(localeCode);
+        }
       }
 
       let pickerProps: Object = {};
@@ -132,7 +152,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           disabledTime={disabledTime}
           locale={locale.lang}
           timePicker={props.timePicker}
-          defaultValue={props.defaultPickerValue || interopDefault(moment)()}
+          defaultValue={props.defaultPickerValue || (multiple ? [interopDefault(moment)()] : interopDefault(moment)())}
           dateInputPlaceholder={placeholder}
           prefixCls={prefixCls}
           className={calendarClassName}
@@ -144,6 +164,9 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           renderFooter={this.renderFooter}
           onPanelChange={props.onPanelChange}
           onChange={this.handleCalendarChange}
+          multiple={multiple}
+          selectWeeks={selectWeeks}
+          selectMonths={selectMonths}
           value={showDate}
         />
       );
@@ -156,13 +179,23 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         />
       ) : null;
 
-      const input = ({ value: inputValue }: { value: moment.Moment | null }) => (
+      let inputValue = '';
+
+      if (value) {
+        if (multiple) {
+          inputValue = value.map((singleValue: moment.Moment) => singleValue.format(props.format)).join(', ');
+        } else {
+          inputValue = value.format(props.format);
+        }
+      }
+
+      const input = () => (
         <div>
           <input
             ref={this.saveInput}
             disabled={props.disabled}
             readOnly
-            value={(inputValue && inputValue.format(props.format)) || ''}
+            value={inputValue}
             placeholder={placeholder}
             className={props.pickerInputClass}
           />
