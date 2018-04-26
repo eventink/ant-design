@@ -101,7 +101,7 @@ export default class List extends React.Component<ListProps> {
     return renderItem(item, index);
   }
 
-  isSomethingAfterLastTtem() {
+  isSomethingAfterLastItem() {
     const { loadMore, pagination, footer } = this.props;
     return !!(loadMore || pagination || footer);
   }
@@ -129,6 +129,7 @@ export default class List extends React.Component<ListProps> {
       header,
       footer,
       loading,
+      locale,
       ...rest,
     } = this.props;
 
@@ -160,17 +161,17 @@ export default class List extends React.Component<ListProps> {
       [`${prefixCls}-bordered`]: bordered,
       [`${prefixCls}-loading`]: isLoading,
       [`${prefixCls}-grid`]: grid,
-      [`${prefixCls}-something-after-last-item`]: this.isSomethingAfterLastTtem(),
+      [`${prefixCls}-something-after-last-item`]: this.isSomethingAfterLastItem(),
     });
 
-    const paginationContent = (
+    const paginationContent = pagination ? (
       <div className={`${prefixCls}-pagination`}>
         <Pagination {...pagination} />
       </div>
-    );
+    ) : null;
 
     let childrenContent;
-    childrenContent = isLoading && (<div style={{ minHeight: 53 }} />);
+    childrenContent = isLoading && <div style={{ minHeight: 53 }} />;
     if (dataSource.length > 0) {
       const items = dataSource.map((item: any, index: number) => this.renderItem(item, index));
       const childrenList = React.Children.map(items, (child: any, index) => React.cloneElement(child, {
@@ -192,20 +193,15 @@ export default class List extends React.Component<ListProps> {
       );
     }
 
-    const content = (
-      <div>
-        <Spin {...loadingProp}>{childrenContent}</Spin>
-        {loadMore}
-        {(!loadMore && pagination) ? paginationContent : null}
-      </div>
-    );
-
     return (
       <div className={classString} {...rest}>
         {header && <div className={`${prefixCls}-header`}>{header}</div>}
-        {content}
-        {children}
+        <Spin {...loadingProp}>
+          {childrenContent}
+          {children}
+        </Spin>
         {footer && <div className={`${prefixCls}-footer`}>{footer}</div>}
+        {loadMore || paginationContent}
       </div>
     );
   }
