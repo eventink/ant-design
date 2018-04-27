@@ -19949,6 +19949,13 @@ var CalendarMixin = {
       displayedValue: value
     });
   },
+  sortValues: function sortValues(values) {
+    if (values && values.length) {
+      values.sort(function (a, b) {
+        return a - b;
+      });
+    }
+  },
   updateMultiSelectValue: function updateMultiSelectValue(value) {
     var originalValue = this.state.selectedValue || [];
     var newValue = originalValue.slice(0);
@@ -19966,12 +19973,10 @@ var CalendarMixin = {
       newValue.push(value);
     }
 
-    if (!newValue.length) {
-      newValue = null;
+    if (newValue.length) {
+      this.sortValues(newValue);
     } else {
-      newValue.sort(function (a, b) {
-        return a - b;
-      });
+      newValue = null;
     }
 
     this.props.onChange(newValue);
@@ -20002,6 +20007,12 @@ var CalendarMixin = {
       newValue = newValue.filter(function (day) {
         return !removeDaysStrings.includes(day.format('YYYYMMDD'));
       });
+    }
+
+    if (newValue.length) {
+      this.sortValues(newValue);
+    } else {
+      newValue = null;
     }
 
     this.props.onChange(newValue);
@@ -60032,7 +60043,7 @@ var Calendar = (0, _createReactClass2['default'])({
       newValue = this.addOrRemoveMultipleValues({ add: days });
     }
 
-    this.setSelectedValue(newValue.length ? newValue : null);
+    this.setSelectedValue(newValue);
   },
   onWeekMouseEnter: function onWeekMouseEnter(_ref2) {
     var month = _ref2.month,
@@ -60063,7 +60074,7 @@ var Calendar = (0, _createReactClass2['default'])({
       newValue = this.addOrRemoveMultipleValues({ add: days });
     }
 
-    this.setSelectedValue(newValue.length ? newValue : null);
+    this.setSelectedValue(newValue);
   },
   getWeekdaysOfMonth: function getWeekdaysOfMonth(_ref3) {
     var month = _ref3.month,
@@ -60958,12 +60969,16 @@ function createPicker(TheCalendar) {
                 _this.input = node;
             };
             var value = props.value || props.defaultValue;
-            if (props.multiple && value && value.length) {
-                value.forEach(function (singleValue) {
-                    return _this.checkValue(singleValue);
-                });
-            } else {
-                _this.checkValue(value);
+            if (value) {
+                if (props.multiple) {
+                    if (value.length) {
+                        value.forEach(function (singleValue) {
+                            return _this.checkValue(singleValue);
+                        });
+                    }
+                } else {
+                    _this.checkValue(value);
+                }
             }
             _this.state = {
                 value: value,
@@ -61014,10 +61029,12 @@ function createPicker(TheCalendar) {
                 var disabledTime = props.showTime ? props.disabledTime : null;
                 var calendarClassName = __WEBPACK_IMPORTED_MODULE_10_classnames___default()((_classNames = {}, __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_defineProperty___default()(_classNames, prefixCls + '-time', props.showTime), __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_defineProperty___default()(_classNames, prefixCls + '-month', __WEBPACK_IMPORTED_MODULE_8_rc_calendar_lib_MonthCalendar___default.a === TheCalendar), _classNames));
                 if (value && localeCode) {
-                    if (multiple && value.length) {
-                        value.forEach(function (singleValue) {
-                            return singleValue.locale(singleValue);
-                        });
+                    if (multiple) {
+                        if (value.length) {
+                            value.forEach(function (singleValue) {
+                                return singleValue.locale(singleValue);
+                            });
+                        }
                     } else {
                         value.locale(localeCode);
                     }
@@ -97909,7 +97926,7 @@ function removeFileItem(file, fileList) {
 /* 907 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"antd","version":"3.4.3","title":"Ant Design","description":"An enterprise-class UI design language and React-based implementation","homepage":"http://ant.design/","keywords":["ant","design","react","react-component","component","components","ui","framework","frontend"],"contributors":["ant"],"repository":{"type":"git","url":"https://github.com/ant-design/ant-design"},"bugs":{"url":"https://github.com/ant-design/ant-design/issues"},"main":"lib/index.js","module":"es/index.js","files":["dist","lib","es"],"typings":"lib/index.d.ts","license":"MIT","peerDependencies":{"react":">=16.0.0","react-dom":">=16.0.0"},"dependencies":{"array-tree-filter":"^2.0.0","babel-runtime":"6.x","classnames":"~2.2.0","create-react-class":"^15.6.0","css-animation":"^1.2.5","dom-closest":"^0.2.0","enquire.js":"^2.1.1","lodash":"^4.17.5","moment":"^2.19.3","omit.js":"^1.0.0","prop-types":"^15.5.7","rc-animate":"^2.4.1","rc-calendar":"https://github.com/eventink/calendar.git#9.6.0-staging.6","rc-cascader":"~0.12.0","rc-checkbox":"~2.1.5","rc-collapse":"~1.8.0","rc-dialog":"~7.1.0","rc-dropdown":"~2.1.0","rc-editor-mention":"^1.0.2","rc-form":"^2.1.0","rc-input-number":"~4.0.0","rc-menu":"~6.2.0","rc-notification":"~3.0.0","rc-pagination":"~1.16.1","rc-progress":"~2.2.2","rc-rate":"~2.4.0","rc-select":"~7.7.0","rc-slider":"~8.6.0","rc-steps":"~3.1.0","rc-switch":"~1.6.0","rc-table":"~6.1.0","rc-tabs":"~9.2.0","rc-time-picker":"~3.3.0","rc-tooltip":"~3.7.0","rc-tree":"~1.8.0","rc-tree-select":"~1.12.0","rc-upload":"~2.4.0","rc-util":"^4.0.4","react-lazy-load":"^3.0.12","react-slick":"~0.23.1","shallowequal":"^1.0.1","warning":"~3.0.0"},"devDependencies":{"@babel/types":"7.0.0-beta.44","@types/react":"^16.0.0","@types/react-dom":"^16.0.0","ansi-styles":"^3.2.0","ant-design-palettes":"^1.0.0","antd-tools":"^5.1.2","babel-cli":"^6.18.0","babel-eslint":"^8.1.1","babel-plugin-import":"^1.0.0","babel-plugin-transform-runtime":"^6.23.0","babel-preset-es2015":"^6.18.0","babel-preset-react":"^6.16.0","babel-preset-stage-0":"^6.16.0","bezier-easing":"^2.0.3","bisheng":"^0.28.0","bisheng-plugin-antd":"^0.16.0","bisheng-plugin-description":"^0.1.1","bisheng-plugin-react":"^0.6.0","bisheng-plugin-toc":"^0.4.0","commander":"^2.11.0","cross-env":"^5.0.3","css-split-webpack-plugin":"^0.2.3","dekko":"^0.2.0","delegate":"^3.1.2","docsearch.js":"^2.5.2","dora-plugin-upload":"^0.3.1","enquire-js":"^0.2.1","enzyme":"^3.1.0","enzyme-adapter-react-16":"^1.0.0","enzyme-to-json":"^3.1.2","eslint":"^4.8.0","eslint-config-airbnb":"latest","eslint-plugin-babel":"^5.0.0","eslint-plugin-import":"^2.2.0","eslint-plugin-jsx-a11y":"^6.0.2","eslint-plugin-markdown":"~1.0.0-beta.4","eslint-plugin-react":"7.7.0","eslint-tinker":"^0.4.0","fetch-jsonp":"^1.0.3","glob":"^7.1.1","immutability-helper":"^2.5.0","intersection-observer":"^0.5.0","jest":"^22.4.2","jsonml.js":"^0.1.0","lint-staged":"^7.0.0","lz-string":"^1.4.4","majo":"^0.6.2","mockdate":"^2.0.1","moment-timezone":"^0.5.5","pre-commit":"^1.2.2","preact":"^8.2.5","preact-compat":"^3.17.0","querystring":"^0.2.0","rc-drawer-menu":"^0.5.3","rc-queue-anim":"^1.4.1","rc-scroll-anim":"^2.2.1","rc-tween-one":"^1.7.2","react":"^16.0.0","react-color":"^2.11.7","react-copy-to-clipboard":"^5.0.0","react-dnd":"^2.5.4","react-dnd-html5-backend":"^2.5.4","react-document-title":"^2.0.1","react-dom":"^16.0.0","react-github-button":"^0.1.1","react-infinite-scroller":"^1.0.15","react-intl":"^2.0.1","react-sublime-video":"^0.2.0","react-virtualized":"~9.18.5","remark-frontmatter":"^1.1.0","remark-parse":"^5.0.0","remark-stringify":"^5.0.0","remark-yaml-config":"^4.0.1","reqwest":"^2.0.5","rimraf":"^2.5.4","scrollama":"^1.4.1","stylelint":"9.2.0","stylelint-config-standard":"^18.0.0","typescript":"~2.8.1","unified":"^6.1.5","values.js":"^1.0.3","xhr2":"^0.1.3"},"scripts":{"test":"jest --config .jest.js","test-node":"jest --config .jest.node.js","test-all":"./scripts/test-all.sh","lint":"npm run lint:ts && npm run lint:es && npm run lint:demo && npm run lint:style","lint:ts":"npm run tsc && antd-tools run ts-lint","lint:es":"eslint tests site scripts components ./.eslintrc.js ./webpack.config.js --ext '.js,.jsx'","lint:demo":"cross-env RUN_ENV=DEMO eslint components/*/demo/*.md --ext '.md'","lint:style":"stylelint \"{site,components}/**/*.less\" --syntax less","lint-fix:ts":"npm run tsc && antd-tools run ts-lint-fix","lint-fix":"npm run lint-fix:code && npm run lint-fix:demo","lint-fix:code":"eslint --fix tests site scripts components ./.eslintrc.js ./webpack.config.js --ext '.js,.jsx'","lint-fix:demo":"eslint-tinker ./components/*/demo/*.md","sort-api":"node ./scripts/sort-api-table.js","dist":"antd-tools run dist","compile":"antd-tools run compile","tsc":"tsc","start":"rimraf _site && node ./scripts/generateColorLess.js && cross-env NODE_ENV=development bisheng start -c ./site/bisheng.config.js","start:preact":"node ./scripts/generateColorLess.js && cross-env NODE_ENV=development REACT_ENV=preact bisheng start -c ./site/bisheng.config.js","site":"cross-env NODE_ENV=production bisheng build --ssr -c ./site/bisheng.config.js && node ./scripts/generateColorLess.js","predeploy":"antd-tools run clean && npm run site && cp netlify.toml _site","deploy":"bisheng gh-pages --push-only","pub":"antd-tools run pub","prepublish":"antd-tools run guard","pre-publish":"npm run test-all && node ./scripts/prepub","authors":"git log --format='%aN <%aE>' | sort -u | grep -v 'users.noreply.github.com' | grep -v 'gitter.im' | grep -v '.local>' | grep -v 'alibaba-inc.com' | grep -v 'alipay.com' | grep -v 'taobao.com' > AUTHORS.txt","lint-staged":"lint-staged","lint-staged:ts":"tsc && node node_modules/tslint/bin/tslint -c node_modules/antd-tools/lib/tslint.json","lint-staged:es":"eslint ./.eslintrc.js ./webpack.config.js","lint-staged:demo":"cross-env RUN_ENV=DEMO eslint --ext '.md'"},"lint-staged":{"components/**/*.tsx":["npm run lint-staged:ts"],"{tests,site,scripts,components}/**/*.{js,jsx}":["npm run lint-staged:es"],"{site,components}/**/*.less":"stylelint --syntax less","components/*/demo/*.md":["npm run lint-staged:demo"]},"pre-commit":["lint-staged"],"sideEffects":["es/**/style/*"]}
+module.exports = {"name":"antd","version":"3.4.3","title":"Ant Design","description":"An enterprise-class UI design language and React-based implementation","homepage":"http://ant.design/","keywords":["ant","design","react","react-component","component","components","ui","framework","frontend"],"contributors":["ant"],"repository":{"type":"git","url":"https://github.com/ant-design/ant-design"},"bugs":{"url":"https://github.com/ant-design/ant-design/issues"},"main":"lib/index.js","module":"es/index.js","files":["dist","lib","es"],"typings":"lib/index.d.ts","license":"MIT","peerDependencies":{"react":">=16.0.0","react-dom":">=16.0.0"},"dependencies":{"array-tree-filter":"^2.0.0","babel-runtime":"6.x","classnames":"~2.2.0","create-react-class":"^15.6.0","css-animation":"^1.2.5","dom-closest":"^0.2.0","enquire.js":"^2.1.1","lodash":"^4.17.5","moment":"^2.19.3","omit.js":"^1.0.0","prop-types":"^15.5.7","rc-animate":"^2.4.1","rc-calendar":"https://github.com/eventink/calendar.git#9.6.0-staging.7","rc-cascader":"~0.12.0","rc-checkbox":"~2.1.5","rc-collapse":"~1.8.0","rc-dialog":"~7.1.0","rc-dropdown":"~2.1.0","rc-editor-mention":"^1.0.2","rc-form":"^2.1.0","rc-input-number":"~4.0.0","rc-menu":"~6.2.0","rc-notification":"~3.0.0","rc-pagination":"~1.16.1","rc-progress":"~2.2.2","rc-rate":"~2.4.0","rc-select":"~7.7.0","rc-slider":"~8.6.0","rc-steps":"~3.1.0","rc-switch":"~1.6.0","rc-table":"~6.1.0","rc-tabs":"~9.2.0","rc-time-picker":"~3.3.0","rc-tooltip":"~3.7.0","rc-tree":"~1.8.0","rc-tree-select":"~1.12.0","rc-upload":"~2.4.0","rc-util":"^4.0.4","react-lazy-load":"^3.0.12","react-slick":"~0.23.1","shallowequal":"^1.0.1","warning":"~3.0.0"},"devDependencies":{"@babel/types":"7.0.0-beta.44","@types/react":"^16.0.0","@types/react-dom":"^16.0.0","ansi-styles":"^3.2.0","ant-design-palettes":"^1.0.0","antd-tools":"^5.1.2","babel-cli":"^6.18.0","babel-eslint":"^8.1.1","babel-plugin-import":"^1.0.0","babel-plugin-transform-runtime":"^6.23.0","babel-preset-es2015":"^6.18.0","babel-preset-react":"^6.16.0","babel-preset-stage-0":"^6.16.0","bezier-easing":"^2.0.3","bisheng":"^0.28.0","bisheng-plugin-antd":"^0.16.0","bisheng-plugin-description":"^0.1.1","bisheng-plugin-react":"^0.6.0","bisheng-plugin-toc":"^0.4.0","commander":"^2.11.0","cross-env":"^5.0.3","css-split-webpack-plugin":"^0.2.3","dekko":"^0.2.0","delegate":"^3.1.2","docsearch.js":"^2.5.2","dora-plugin-upload":"^0.3.1","enquire-js":"^0.2.1","enzyme":"^3.1.0","enzyme-adapter-react-16":"^1.0.0","enzyme-to-json":"^3.1.2","eslint":"^4.8.0","eslint-config-airbnb":"latest","eslint-plugin-babel":"^5.0.0","eslint-plugin-import":"^2.2.0","eslint-plugin-jsx-a11y":"^6.0.2","eslint-plugin-markdown":"~1.0.0-beta.4","eslint-plugin-react":"7.7.0","eslint-tinker":"^0.4.0","fetch-jsonp":"^1.0.3","glob":"^7.1.1","immutability-helper":"^2.5.0","intersection-observer":"^0.5.0","jest":"^22.4.2","jsonml.js":"^0.1.0","lint-staged":"^7.0.0","lz-string":"^1.4.4","majo":"^0.6.2","mockdate":"^2.0.1","moment-timezone":"^0.5.5","pre-commit":"^1.2.2","preact":"^8.2.5","preact-compat":"^3.17.0","querystring":"^0.2.0","rc-drawer-menu":"^0.5.3","rc-queue-anim":"^1.4.1","rc-scroll-anim":"^2.2.1","rc-tween-one":"^1.7.2","react":"^16.0.0","react-color":"^2.11.7","react-copy-to-clipboard":"^5.0.0","react-dnd":"^2.5.4","react-dnd-html5-backend":"^2.5.4","react-document-title":"^2.0.1","react-dom":"^16.0.0","react-github-button":"^0.1.1","react-infinite-scroller":"^1.0.15","react-intl":"^2.0.1","react-sublime-video":"^0.2.0","react-virtualized":"~9.18.5","remark-frontmatter":"^1.1.0","remark-parse":"^5.0.0","remark-stringify":"^5.0.0","remark-yaml-config":"^4.0.1","reqwest":"^2.0.5","rimraf":"^2.5.4","scrollama":"^1.4.1","stylelint":"9.2.0","stylelint-config-standard":"^18.0.0","typescript":"~2.8.1","unified":"^6.1.5","values.js":"^1.0.3","xhr2":"^0.1.3"},"scripts":{"test":"jest --config .jest.js","test-node":"jest --config .jest.node.js","test-all":"./scripts/test-all.sh","lint":"npm run lint:ts && npm run lint:es && npm run lint:demo && npm run lint:style","lint:ts":"npm run tsc && antd-tools run ts-lint","lint:es":"eslint tests site scripts components ./.eslintrc.js ./webpack.config.js --ext '.js,.jsx'","lint:demo":"cross-env RUN_ENV=DEMO eslint components/*/demo/*.md --ext '.md'","lint:style":"stylelint \"{site,components}/**/*.less\" --syntax less","lint-fix:ts":"npm run tsc && antd-tools run ts-lint-fix","lint-fix":"npm run lint-fix:code && npm run lint-fix:demo","lint-fix:code":"eslint --fix tests site scripts components ./.eslintrc.js ./webpack.config.js --ext '.js,.jsx'","lint-fix:demo":"eslint-tinker ./components/*/demo/*.md","sort-api":"node ./scripts/sort-api-table.js","dist":"antd-tools run dist","compile":"antd-tools run compile","tsc":"tsc","start":"rimraf _site && node ./scripts/generateColorLess.js && cross-env NODE_ENV=development bisheng start -c ./site/bisheng.config.js","start:preact":"node ./scripts/generateColorLess.js && cross-env NODE_ENV=development REACT_ENV=preact bisheng start -c ./site/bisheng.config.js","site":"cross-env NODE_ENV=production bisheng build --ssr -c ./site/bisheng.config.js && node ./scripts/generateColorLess.js","predeploy":"antd-tools run clean && npm run site && cp netlify.toml _site","deploy":"bisheng gh-pages --push-only","pub":"antd-tools run pub","prepublish":"antd-tools run guard","pre-publish":"npm run test-all && node ./scripts/prepub","authors":"git log --format='%aN <%aE>' | sort -u | grep -v 'users.noreply.github.com' | grep -v 'gitter.im' | grep -v '.local>' | grep -v 'alibaba-inc.com' | grep -v 'alipay.com' | grep -v 'taobao.com' > AUTHORS.txt","lint-staged":"lint-staged","lint-staged:ts":"tsc && node node_modules/tslint/bin/tslint -c node_modules/antd-tools/lib/tslint.json","lint-staged:es":"eslint ./.eslintrc.js ./webpack.config.js","lint-staged:demo":"cross-env RUN_ENV=DEMO eslint --ext '.md'"},"lint-staged":{"components/**/*.tsx":["npm run lint-staged:ts"],"{tests,site,scripts,components}/**/*.{js,jsx}":["npm run lint-staged:es"],"{site,components}/**/*.less":"stylelint --syntax less","components/*/demo/*.md":["npm run lint-staged:demo"]},"pre-commit":["lint-staged"],"sideEffects":["es/**/style/*"]}
 
 /***/ }),
 /* 908 */,

@@ -26,10 +26,14 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     constructor(props: any) {
       super(props);
       const value = props.value || props.defaultValue;
-      if (props.multiple && value && value.length) {
-        value.forEach((singleValue: moment.Moment) => this.checkValue(singleValue));
-      } else {
-        this.checkValue(value);
+      if (value) {
+        if (props.multiple) {
+          if (value.length) {
+            value.forEach((singleValue: moment.Moment) => this.checkValue(singleValue));
+          }
+        } else {
+          this.checkValue(value);
+        }
       }
       this.state = {
         value,
@@ -121,8 +125,10 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       });
 
       if (value && localeCode) {
-        if (multiple && value.length) {
-          value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
+        if (multiple) {
+          if (value.length) {
+            value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
+          }
         } else {
           value.locale(localeCode);
         }
