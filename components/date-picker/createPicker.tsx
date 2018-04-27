@@ -112,7 +112,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     render() {
       const { value, showDate } = this.state;
       const props = omit(this.props, ['onChange']);
-      const { prefixCls, locale, localeCode, multiple, selectWeeks, selectMonths } = props;
+      const { prefixCls, locale, localeCode, multiple, selectWeekDays, selectMonths } = props;
 
       const placeholder = ('placeholder' in props)
         ? props.placeholder : locale.lang.placeholder;
@@ -171,7 +171,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           onPanelChange={props.onPanelChange}
           onChange={this.handleCalendarChange}
           multiple={multiple}
-          selectWeeks={selectWeeks}
+          selectWeekDays={selectWeekDays}
           selectMonths={selectMonths}
           value={showDate}
         />
