@@ -178,11 +178,17 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       );
 
       const clearIcon = (!props.disabled && props.allowClear && value) ? (
-        <Icon
-          type="cross-circle"
-          className={`${prefixCls}-picker-clear`}
-          onClick={this.clearSelection}
-        />
+        props.clearIcon ? (
+          <span onClick={this.clearSelection}>
+            {props.clearIcon}
+          </span>
+        ) : (
+          <Icon
+            type="cross-circle"
+            className={`${prefixCls}-picker-clear`}
+            onClick={this.clearSelection}
+          />
+        )
       ) : null;
 
       let inputValue = '';
@@ -210,7 +216,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
             className={props.pickerInputClass}
           />
           {clearIcon}
-          <span className={`${prefixCls}-picker-icon`} />
+          {props.pickerIcon || <span className={`${prefixCls}-picker-icon`} />}
         </div>
       );
 
