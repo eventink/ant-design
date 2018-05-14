@@ -61190,7 +61190,11 @@ function createPicker(TheCalendar) {
                 }
                 Object(__WEBPACK_IMPORTED_MODULE_13__util_warning__["a" /* default */])(!('onOK' in props), 'It should be `DatePicker[onOk]` or `MonthPicker[onOk]`, instead of `onOK`!');
                 var calendar = __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](TheCalendar, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, calendarProps, { disabledDate: props.disabledDate, disabledTime: disabledTime, locale: locale.lang, timePicker: props.timePicker, defaultValue: props.defaultPickerValue || (multiple ? [Object(__WEBPACK_IMPORTED_MODULE_14__util_interopDefault__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_7_moment__)()] : Object(__WEBPACK_IMPORTED_MODULE_14__util_interopDefault__["a" /* default */])(__WEBPACK_IMPORTED_MODULE_7_moment__)()), dateInputPlaceholder: placeholder, prefixCls: prefixCls, className: calendarClassName, onOk: props.onOk, dateRender: props.dateRender, format: props.format, showToday: props.showToday, monthCellContentRender: props.monthCellContentRender, renderFooter: this.renderFooter, onPanelChange: props.onPanelChange, onChange: this.handleCalendarChange, multiple: multiple, selectWeekDays: selectWeekDays, selectMonths: selectMonths, value: showDate }));
-                var clearIcon = !props.disabled && props.allowClear && value ? __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__icon__["a" /* default */], { type: 'cross-circle', className: prefixCls + '-picker-clear', onClick: this.clearSelection }) : null;
+                var clearIcon = !props.disabled && props.allowClear && value ? props.clearIcon ? __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](
+                    'span',
+                    { onClick: this.clearSelection },
+                    props.clearIcon
+                ) : __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](__WEBPACK_IMPORTED_MODULE_12__icon__["a" /* default */], { type: 'cross-circle', className: prefixCls + '-picker-clear', onClick: this.clearSelection }) : null;
                 var inputValue = '';
                 if (value) {
                     if (props.formatInput) {
@@ -61211,7 +61215,7 @@ function createPicker(TheCalendar) {
                         null,
                         __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('input', { ref: _this2.saveInput, disabled: props.disabled, readOnly: true, value: inputValue, placeholder: placeholder, className: props.pickerInputClass }),
                         clearIcon,
-                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('span', { className: prefixCls + '-picker-icon' })
+                        props.pickerIcon || __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('span', { className: prefixCls + '-picker-icon' })
                     );
                 };
                 return __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](
