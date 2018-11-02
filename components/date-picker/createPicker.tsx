@@ -214,6 +214,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
             value={inputValue}
             placeholder={placeholder}
             className={props.pickerInputClass}
+            tabIndex={props.tabIndex}
           />
           {clearIcon}
           {props.pickerIcon || <span className={`${prefixCls}-picker-icon`} />}
