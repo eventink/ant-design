@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import message from '..';
+import Icon from '../../icon';
 
 describe('message', () => {
   beforeEach(() => {
@@ -31,6 +32,20 @@ describe('message', () => {
     });
     message.info('whatever');
     expect(document.querySelectorAll('.custom-container').length).toBe(1);
+  });
+
+  it('should be able to config maxCount', () => {
+    message.config({
+      maxCount: 5,
+    });
+    for (let i = 0; i < 10; i += 1) {
+      message.info('test');
+    }
+    message.info('last');
+    expect(document.querySelectorAll('.ant-message-notice').length).toBe(5);
+    expect(document.querySelectorAll('.ant-message-notice')[4].textContent).toBe('last');
+    jest.runAllTimers();
+    expect(document.querySelectorAll('.ant-message-notice').length).toBe(0);
   });
 
   it('should be able to hide manually', () => {
@@ -71,6 +86,17 @@ describe('message', () => {
     });
   });
 
+  it('should be called like promise', () => {
+    jest.useRealTimers();
+    const defaultDuration = 3;
+    const now = Date.now();
+    message.info('whatever').then(() => {
+      // calculate the approximately duration value
+      const aboutDuration = parseInt((Date.now() - now) / 1000, 10);
+      expect(aboutDuration).toBe(defaultDuration);
+    });
+  });
+
   // https://github.com/ant-design/ant-design/issues/8201
   it('should hide message correctly', () => {
     let hide;
@@ -78,6 +104,7 @@ describe('message', () => {
       componentDidMount() {
         hide = message.loading('Action in progress..', 0);
       }
+
       render() {
         return <div>test</div>;
       }
@@ -89,6 +116,16 @@ describe('message', () => {
     expect(document.querySelectorAll('.ant-message-notice').length).toBe(0);
   });
 
+  it('should allow custom icon', () => {
+    message.open({ content: 'Message', icon: <Icon type="smile-o" /> });
+    expect(document.querySelectorAll('.anticon-smile-o').length).toBe(1);
+  });
+
+  it('should have no icon', () => {
+    message.open({ content: 'Message' });
+    expect(document.querySelectorAll('.ant-message-notice .anticon').length).toBe(0);
+  });
+
   // https://github.com/ant-design/ant-design/issues/8201
   it('should destroy messages correctly', () => {
     // eslint-disable-next-line
@@ -98,6 +135,7 @@ describe('message', () => {
         message.loading('Action in progress2..', 0);
         setTimeout(() => message.destroy(), 1000);
       }
+
       render() {
         return <div>test</div>;
       }

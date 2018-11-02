@@ -1,6 +1,8 @@
 const path = require('path');
 const CSSSplitWebpackPlugin = require('css-split-webpack-plugin').default;
 const replaceLib = require('antd-tools/lib/replaceLib');
+const webpack = require('webpack');
+const WebpackBar = require('webpackbar');
 
 const isDev = process.env.NODE_ENV === 'development';
 const usePreact = process.env.REACT_ENV === 'preact';
@@ -11,13 +13,30 @@ function alertBabelConfig(rules) {
       if (rule.options.plugins.indexOf(replaceLib) === -1) {
         rule.options.plugins.push(replaceLib);
       }
-      rule.options.plugins = rule.options.plugins.filter(plugin =>
+      rule.options.plugins = rule.options.plugins.filter(plugin => (
         !plugin.indexOf || plugin.indexOf('babel-plugin-add-module-exports') === -1
-      );
+      ));
     } else if (rule.use) {
       alertBabelConfig(rule.use);
     }
   });
+}
+
+function usePrettyWebpackBar(config) {
+  // remove old progress plugin.
+  config.plugins = config.plugins
+    .filter((plugin) => {
+      return !(plugin instanceof webpack.ProgressPlugin)
+        && !(plugin instanceof WebpackBar);
+    });
+
+  // use brand new progress bar.
+  config.plugins.push(
+    new WebpackBar({
+      name: '📦  Site',
+      minimal: false,
+    })
+  );
 }
 
 module.exports = {
@@ -83,6 +102,7 @@ module.exports = {
   webpackConfig(config) {
     config.resolve.alias = {
       'antd/lib': path.join(process.cwd(), 'components'),
+      'antd/es': path.join(process.cwd(), 'components'),
       antd: path.join(process.cwd(), 'index'),
       site: path.join(process.cwd(), 'site'),
       'react-router': 'react-router/umd/ReactRouter',
@@ -106,8 +126,11 @@ module.exports = {
     }
 
     alertBabelConfig(config.module.rules);
+    usePrettyWebpackBar(config);
 
-    config.plugins.push(new CSSSplitWebpackPlugin({ size: 4000 }));
+    config.plugins.push(
+      new CSSSplitWebpackPlugin({ size: 4000 }),
+    );
 
     return config;
   },

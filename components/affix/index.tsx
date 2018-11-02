@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import classNames from 'classnames';
 import shallowequal from 'shallowequal';
@@ -38,8 +38,7 @@ function getOffset(element: HTMLElement, target: HTMLElement | Window | null) {
 function noop() {}
 
 function getDefaultTarget() {
-  return typeof window !== 'undefined' ?
-    window : null;
+  return typeof window !== 'undefined' ? window : null;
 }
 
 // Affix
@@ -145,7 +144,9 @@ export default class Affix extends React.Component<AffixProps, AffixState> {
     const targetNode = target();
 
     // Backwards support
-    offsetTop = offsetTop || offset;
+    // Fix: if offsetTop === 0, it will get undefined,
+    //   if offsetBottom is type of number, offsetMode will be { top: false, ... }
+    offsetTop = typeof offsetTop === 'undefined' ? offset : offsetTop;
     const scrollTop = getScroll(targetNode, true);
     const affixNode = ReactDOM.findDOMNode(this) as HTMLElement;
     const elemOffset = getOffset(affixNode, targetNode);
@@ -230,6 +231,12 @@ export default class Affix extends React.Component<AffixProps, AffixState> {
       this.setTargetEventListeners(nextProps.target!);
 
       // Mock Event object.
+      this.updatePosition({});
+    }
+    if (
+      this.props.offsetTop !== nextProps.offsetTop ||
+      this.props.offsetBottom !== nextProps.offsetBottom
+    ) {
       this.updatePosition({});
     }
   }

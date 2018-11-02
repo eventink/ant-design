@@ -39,15 +39,15 @@ Open browser at http://localhost:3000/, it renders a header saying "Welcome to R
 $ yarn add antd
 ```
 
-Modify `src/App.js`, import Button component from `antd`.
+Modify `src/App.tsx`, import Button component from `antd`.
 
 ```jsx
+import { Button } from 'antd';
 import * as React from 'react';
-import Button from 'antd/lib/button';
 import './App.css';
 
 class App extends React.Component {
-  render() {
+  public render() {
     return (
       <div className="App">
         <Button type="primary">Button</Button>
@@ -90,11 +90,11 @@ $ yarn add react-app-rewired --dev
 ```diff
 /* package.json */
 "scripts": {
--   "start": "react-scripts start",
+-   "start": "react-scripts-ts start",
 +   "start": "react-app-rewired start --scripts-version react-scripts-ts",
--   "build": "react-scripts build",
+-   "build": "react-scripts-ts build",
 +   "build": "react-app-rewired build --scripts-version react-scripts-ts",
--   "test": "react-scripts test --env=jsdom",
+-   "test": "react-scripts-ts test --env=jsdom",
 +   "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
 }
 ```
@@ -133,8 +133,8 @@ module.exports = function override(config, env) {
   tsLoader.options = {
     getCustomTransformers: () => ({
       before: [ tsImportPluginFactory({
-        libraryName: 'antd',
         libraryDirectory: 'es',
+        libraryName: 'antd',
         style: 'css',
       }) ]
     })
@@ -200,6 +200,7 @@ $ yarn add react-app-rewire-less --dev
     };
 
 +   config = rewireLess.withLoaderOptions({
++     javascriptEnabled: true,
 +     modifyVars: { "@primary-color": "#1DA57A" },
 +   })(config, env);
 

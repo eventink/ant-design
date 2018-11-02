@@ -76,10 +76,12 @@
     padding: 4px 0 12px;
     font-size: @font-size-base;
     color: @popover-color;
+    position: relative;
     > .@{iconfont-css-prefix} {
-      color: @warning-color;
-      line-height: @line-height-base + 0.1;
       position: absolute;
+      top: 8px; // 4px for padding-top, 4px for vertical middle;
+      color: @warning-color;
+      font-size: @font-size-base;
     }
     &-title {
       padding-left: @font-size-base + 8px;
@@ -111,7 +113,7 @@
   &-placement-top > &-content > &-arrow,
   &-placement-topLeft > &-content >  &-arrow,
   &-placement-topRight > &-content >  &-arrow {
-    bottom: @popover-distance - @popover-arrow-width + 2px;
+    bottom: @popover-distance - @popover-arrow-width + 1.5px;
     box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.07);
   }
   &-placement-top > &-content >  &-arrow {
@@ -146,7 +148,7 @@
   &-placement-bottomLeft > &-content >  &-arrow,
   &-placement-bottomRight > &-content >  &-arrow {
     top: @popover-distance - @popover-arrow-width + 2px;
-    box-shadow: -1px -1px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.06);
   }
   &-placement-bottom > &-content >  &-arrow {
     left: 50%;

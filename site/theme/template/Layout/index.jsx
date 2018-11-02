@@ -1,14 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Icon } from 'antd';
 import { enquireScreen } from 'enquire-js';
 import { addLocaleData, IntlProvider } from 'react-intl';
+import 'moment/locale/zh-cn';
+import { LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
 import Header from './Header';
 import Footer from './Footer';
 import enLocale from '../../en-US';
 import cnLocale from '../../zh-CN';
 import * as utils from '../utils';
+
+if (typeof window !== 'undefined' && navigator.serviceWorker) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach(registration => registration.unregister());
+  });
+}
 
 if (typeof window !== 'undefined') {
   /* eslint-disable global-require */
@@ -26,20 +34,18 @@ enquireScreen((b) => {
   isMobile = b;
 });
 
-const promoteBannerImageUrl = 'https://gw.alipayobjects.com/zos/rmsportal/bpKcpwimYnZMTarUxCEd.png';
-
 export default class Layout extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired,
   }
+
   static childContextTypes = {
     isMobile: PropTypes.bool,
   };
 
   getChildContext() {
-    return {
-      isMobile: this.state.isMobile,
-    };
+    const { isMobile: mobile } = this.state;
+    return { isMobile: mobile };
   }
 
   constructor(props) {
@@ -48,23 +54,24 @@ export default class Layout extends React.Component {
     const appLocale = utils.isZhCN(pathname) ? cnLocale : enLocale;
     addLocaleData(appLocale.data);
 
-    const adBannerClosed = typeof window === 'undefined' ? true : (
-      window.localStorage &&
-      window.localStorage.getItem(`adBannerClosed-${promoteBannerImageUrl}`) === 'true'
-    );
     this.state = {
       appLocale,
       isMobile,
-      adBannerClosed,
     };
   }
 
   componentDidMount() {
-    if (typeof window.ga !== 'undefined') {
-      this.context.router.listen((loc) => {
+    const { router } = this.context;
+    router.listen((loc) => {
+      if (typeof window.ga !== 'undefined') {
         window.ga('send', 'pageview', loc.pathname + loc.search);
-      });
-    }
+      }
+      // eslint-disable-next-line
+      if (typeof window._hmt !== 'undefined') {
+        // eslint-disable-next-line
+        window._hmt.push(['_trackPageview', loc.pathname + loc.search]);
+      }
+    });
 
     const nprogressHiddenStyle = document.getElementById('nprogress-style');
     if (nprogressHiddenStyle) {
@@ -84,42 +91,19 @@ export default class Layout extends React.Component {
     clearTimeout(this.timer);
   }
 
-  closePromoteBanner = (e) => {
-    e.preventDefault();
-    this.makeAdBannerClosed();
-  }
-
-  makeAdBannerClosed = () => {
-    this.setState({
-      adBannerClosed: true,
-    });
-    if (window.localStorage) {
-      window.localStorage.setItem(`adBannerClosed-${promoteBannerImageUrl}`, 'true');
-    }
-  }
-
   render() {
     const { children, ...restProps } = this.props;
     const { appLocale } = this.state;
 
-    const promoteBanner = this.state.adBannerClosed ? null : (
-      <a href="http://www.anijue.com/p/q/yuque423/pages/home/index.html?chInfo=ch_yuquebooks__chsub_antd" className="promote-banner" onClick={this.makeAdBannerClosed}>
-        <img
-          src={promoteBannerImageUrl}
-          alt="seeconf"
-        />
-        <Icon type="cross" title="close ad" onClick={this.closePromoteBanner} />
-      </a>
-    );
-
     return (
       <IntlProvider locale={appLocale.locale} messages={appLocale.messages}>
-        <div className="page-wrapper">
-          {promoteBanner}
-          <Header {...restProps} />
-          {children}
-          <Footer {...restProps} />
-        </div>
+        <LocaleProvider locale={appLocale.locale === 'zh-CN' ? zhCN : null}>
+          <div className="page-wrapper">
+            <Header {...restProps} />
+            {children}
+            <Footer {...restProps} />
+          </div>
+        </LocaleProvider>
       </IntlProvider>
     );
   }

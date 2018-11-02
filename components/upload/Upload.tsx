@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { polyfill } from 'react-lifecycles-compat';
 import RcUpload from 'rc-upload';
 import classNames from 'classnames';
 import uniqBy from 'lodash/uniqBy';
@@ -20,7 +21,7 @@ import { T, fileToObject, genPercentAdd, getFileItem, removeFileItem } from './u
 
 export { UploadProps };
 
-export default class Upload extends React.Component<UploadProps, UploadState> {
+class Upload extends React.Component<UploadProps, UploadState> {
   static Dragger: typeof Dragger;
 
   static defaultProps = {
@@ -37,6 +38,15 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     disabled: false,
     supportServerRender: true,
   };
+
+  static getDerivedStateFromProps(nextProps: UploadProps) {
+    if ('fileList' in nextProps) {
+      return {
+        fileList: nextProps.fileList || [],
+      };
+    }
+    return null;
+  }
 
   recentUploadStatus: boolean | PromiseLike<any>;
   progressTimer: any;
@@ -57,11 +67,18 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
   }
 
   onStart = (file: RcFile) => {
-    let targetItem;
-    let nextFileList = this.state.fileList.concat();
-    targetItem = fileToObject(file);
+    const targetItem = fileToObject(file);
     targetItem.status = 'uploading';
-    nextFileList.push(targetItem);
+
+    const nextFileList = this.state.fileList.concat();
+
+    const fileIndex = nextFileList.findIndex(({ uid }) => uid === targetItem.uid);
+    if (fileIndex === -1) {
+      nextFileList.push(targetItem);
+    } else {
+      nextFileList[fileIndex] = targetItem;
+    }
+
     this.onChange({
       file: targetItem,
       fileList: nextFileList,
@@ -79,7 +96,7 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     this.progressTimer = setInterval(() => {
       curPercent = getPercent(curPercent);
       this.onProgress({
-        percent: curPercent,
+        percent: curPercent * 100,
       }, file);
     }, 200);
   }
@@ -174,14 +191,6 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: UploadProps) {
-    if ('fileList' in nextProps) {
-      this.setState({
-        fileList: nextProps.fileList || [],
-      });
-    }
-  }
-
   onFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
     this.setState({
       dragState: e.type,
@@ -195,8 +204,11 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     const result = this.props.beforeUpload(file, fileList);
     if (result === false) {
       this.onChange({
-        file: fileToObject(file),
-        fileList: uniqBy(fileList.map(fileToObject).concat(this.state.fileList),  (item: UploadFile) => item.uid),
+        file,
+        fileList: uniqBy(
+          this.state.fileList.concat(fileList.map(fileToObject)),
+          (item: UploadFile) => item.uid,
+        ),
       });
       return false;
     } else if (result && (result as PromiseLike<any>).then) {
@@ -314,3 +326,7 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     );
   }
 }
+
+polyfill(Upload);
+
+export default Upload;

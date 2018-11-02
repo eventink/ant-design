@@ -19,6 +19,7 @@ export type CardType = 'inner';
 export interface CardTabListType {
   key: string;
   tab: React.ReactNode;
+  disabled?: boolean;
 }
 
 export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -26,6 +27,7 @@ export interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 't
   title?: React.ReactNode;
   extra?: React.ReactNode;
   bordered?: boolean;
+  headStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
   style?: React.CSSProperties;
   loading?: boolean;
@@ -133,8 +135,8 @@ export default class Card extends React.Component<CardProps, CardState> {
   }
   render() {
     const {
-      prefixCls = 'ant-card', className, extra, bodyStyle, noHovering, hoverable, title, loading,
-      bordered = true, type, cover, actions, tabList, children, activeTabKey, defaultActiveTabKey, ...others,
+      prefixCls = 'ant-card', className, extra, headStyle = {}, bodyStyle = {}, noHovering, hoverable, title, loading,
+      bordered = true, type, cover, actions, tabList, children, activeTabKey, defaultActiveTabKey, ...others
     } = this.props;
 
     const classString = classNames(prefixCls, className, {
@@ -148,8 +150,14 @@ export default class Card extends React.Component<CardProps, CardState> {
       [`${prefixCls}-type-${type}`]: !!type,
     });
 
+    const loadingBlockStyle = (bodyStyle.padding === 0 || bodyStyle.padding === '0px')
+      ? { padding: 24 } : undefined;
+
     const loadingBlock = (
-      <div className={`${prefixCls}-loading-content`}>
+      <div
+        className={`${prefixCls}-loading-content`}
+        style={loadingBlockStyle}
+      >
         <Row gutter={8}>
           <Col span={22}>
             <div className={`${prefixCls}-loading-block`} />
@@ -219,12 +227,12 @@ export default class Card extends React.Component<CardProps, CardState> {
         size="large"
         onChange={this.onTabChange}
       >
-        {tabList.map(item => <Tabs.TabPane tab={item.tab} key={item.key} />)}
+        {tabList.map(item => <Tabs.TabPane tab={item.tab} disabled={item.disabled} key={item.key} />)}
       </Tabs>
     ) : null;
     if (title || extra || tabs) {
       head = (
-        <div className={`${prefixCls}-head`}>
+        <div className={`${prefixCls}-head`} style={headStyle}>
           <div className={`${prefixCls}-head-wrapper`}>
             {title && <div className={`${prefixCls}-head-title`}>{title}</div>}
             {extra && <div className={`${prefixCls}-extra`}>{extra}</div>}
