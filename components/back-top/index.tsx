@@ -4,9 +4,7 @@ import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import classNames from 'classnames';
 import omit from 'omit.js';
 import getScroll from '../_util/getScroll';
-import getRequestAnimationFrame from '../_util/getRequestAnimationFrame';
-
-const reqAnimFrame = getRequestAnimationFrame();
+import raf from 'raf';
 
 const easeInOutCubic = (t: number, b: number, c: number, d: number) => {
   const cc = c - b;
@@ -51,7 +49,7 @@ export default class BackTop extends React.Component<BackTopProps, any> {
     const getTarget = this.props.target || getDefaultTarget;
     const targetNode = getTarget();
     if (targetNode === window) {
-      return window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop;
+      return window.pageYOffset || document.body.scrollTop || document.documentElement!.scrollTop;
     }
     return (targetNode as HTMLElement).scrollTop;
   }
@@ -64,10 +62,12 @@ export default class BackTop extends React.Component<BackTopProps, any> {
       const time = timestamp - startTime;
       this.setScrollTop(easeInOutCubic(time, scrollTop, 0, 450));
       if (time < 450) {
-        reqAnimFrame(frameFunc);
+        raf(frameFunc);
+      } else {
+        this.setScrollTop(0);
       }
     };
-    reqAnimFrame(frameFunc);
+    raf(frameFunc);
     (this.props.onClick || noop)(e);
   }
 
@@ -76,7 +76,7 @@ export default class BackTop extends React.Component<BackTopProps, any> {
     const targetNode = getTarget();
     if (targetNode === window) {
       document.body.scrollTop = value;
-      document.documentElement.scrollTop = value;
+      document.documentElement!.scrollTop = value;
     } else {
       (targetNode as HTMLElement).scrollTop = value;
     }

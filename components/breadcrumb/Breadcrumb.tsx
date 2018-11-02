@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import { cloneElement } from 'react';
 import warning from '../_util/warning';
 import BreadcrumbItem from './BreadcrumbItem';
@@ -41,7 +41,7 @@ function defaultItemRender(route: Route, params: any, routes: Route[], paths: st
 }
 
 export default class Breadcrumb extends React.Component<BreadcrumbProps, any> {
-  static Item: any;
+  static Item: typeof BreadcrumbItem;
 
   static defaultProps = {
     prefixCls: 'ant-breadcrumb',

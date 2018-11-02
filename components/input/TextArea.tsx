@@ -1,7 +1,6 @@
 import * as React from 'react';
 import omit from 'omit.js';
 import classNames from 'classnames';
-import { AbstractInputProps } from './Input';
 import calculateNodeHeight from './calculateNodeHeight';
 
 function onNextFrame(cb: () => void) {
@@ -24,18 +23,19 @@ export interface AutoSizeType {
   maxRows?: number;
 }
 
-export interface TextAreaProps extends AbstractInputProps {
+export type HTMLTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export interface TextAreaProps extends HTMLTextareaProps {
+  prefixCls?: string;
   autosize?: boolean | AutoSizeType;
-  onPressEnter?: React.FormEventHandler<any>;
+  onPressEnter?: React.KeyboardEventHandler<HTMLTextAreaElement>;
 }
 
 export interface TextAreaState {
   textareaStyles?: React.CSSProperties;
 }
 
-export type HTMLTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
-
-export default class TextArea extends React.Component<TextAreaProps & HTMLTextareaProps, TextAreaState> {
+export default class TextArea extends React.Component<TextAreaProps, TextAreaState> {
   static defaultProps = {
     prefixCls: 'ant-input',
   };

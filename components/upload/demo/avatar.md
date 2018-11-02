@@ -9,7 +9,7 @@ title:
 
 点击上传用户头像，并使用 `beforeUpload` 限制用户上传的图片格式和大小。
 
-> `beforeUpload` 的返回值可以是一个 Promise 以支持也支持异步检查：[示例](http://react-component.github.io/upload/examples/beforeUpload.html)。
+> `beforeUpload` 的返回值可以是一个 Promise 以支持异步处理，如服务端校验等：[示例](http://react-component.github.io/upload/examples/beforeUpload.html)。
 
 ## en-US
 
@@ -42,6 +42,7 @@ class Avatar extends React.Component {
   state = {
     loading: false,
   };
+
   handleChange = (info) => {
     if (info.file.status === 'uploading') {
       this.setState({ loading: true });
@@ -55,6 +56,7 @@ class Avatar extends React.Component {
       }));
     }
   }
+
   render() {
     const uploadButton = (
       <div>
@@ -73,7 +75,7 @@ class Avatar extends React.Component {
         beforeUpload={beforeUpload}
         onChange={this.handleChange}
       >
-        {imageUrl ? <img src={imageUrl} alt="" /> : uploadButton}
+        {imageUrl ? <img src={imageUrl} alt="avatar" /> : uploadButton}
       </Upload>
     );
   }

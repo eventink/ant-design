@@ -108,17 +108,6 @@
     display: block;
   }
 
-  .nav-phone-icon:before {
-    content: "";
-    display: block;
-    border-radius: 2px;
-    width: 16px;
-    height: 2px;
-    background: #777;
-    box-shadow: 0 6px 0 0 #777, 0 12px 0 0 #777;
-    position: absolute;
-  }
-
   .main {
     height: calc(100% - 86px);
   }
@@ -168,22 +157,6 @@
     h2 {
       margin-top: 16px;
     }
-    .bottom-bar {
-      padding: 16px;
-
-      text-align: center;
-      .translate-button {
-        width: auto;
-        text-align: center;
-        margin-bottom: 16px;
-      }
-      > div > span {
-        display: block;
-        &:nth-child(1), &:nth-child(2) {
-          display: none;
-        }
-      }
-    }
   }
 
   .prev-next-nav {
@@ -230,10 +203,13 @@
     }
     .img-wrapper {
       position: initial;
-      margin-top: 48px;
+      margin-top: 32px;
+      text-align: center;
       svg {
         width: 100%;
         height: auto;
+        margin: 0 auto;
+        max-width: 360px;
       }
     }
     .text-wrapper {
@@ -248,13 +224,19 @@
         line-height: 28px;
         color: @home-text-color;
       }
+      .banner-btns {
+        display: block;
+        text-align: center;
+        min-width: 100%;
+        white-space: nowrap;
+      }
     }
   }
   .page1 {
     min-height: 1538px;
     .ant-row {
       margin: 24px auto 64px;
-      >div {
+      > div {
         margin-bottom: 48px;
       }
     }
@@ -310,6 +292,13 @@
             a {
               display: block;
             }
+          }
+          a.more-mobile-react, a.more-mobile-angular {
+            color: @link-color;
+            margin-top: 0;
+          }
+          a.more-mobile-react:hover, a.more-mobile-angular:hover {
+            color: #40a9ff;
           }
         }
       }

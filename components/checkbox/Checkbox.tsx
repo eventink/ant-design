@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import RcCheckbox from 'rc-checkbox';
 import shallowEqual from 'shallowequal';
@@ -79,12 +79,17 @@ export default class Checkbox extends React.Component<CheckboxProps, {}> {
       style,
       onMouseEnter,
       onMouseLeave,
-      ...restProps,
+      ...restProps
     } = props;
     const { checkboxGroup } = context;
     let checkboxProps: CheckboxProps = { ...restProps };
     if (checkboxGroup) {
-      checkboxProps.onChange = () => checkboxGroup.toggleOption({ label: children, value: props.value });
+      checkboxProps.onChange = (...args) => {
+        if (restProps.onChange) {
+          restProps.onChange(...args);
+        }
+        checkboxGroup.toggleOption({ label: children, value: props.value });
+      };
       checkboxProps.checked = checkboxGroup.value.indexOf(props.value) !== -1;
       checkboxProps.disabled = props.disabled || checkboxGroup.disabled;
     }

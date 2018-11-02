@@ -89,11 +89,11 @@ $ yarn add react-app-rewired --dev
 ```diff
 /* package.json */
 "scripts": {
--   "start": "react-scripts start",
+-   "start": "react-scripts-ts start",
 +   "start": "react-app-rewired start --scripts-version react-scripts-ts",
--   "build": "react-scripts build",
+-   "build": "react-scripts-ts build",
 +   "build": "react-app-rewired build --scripts-version react-scripts-ts",
--   "test": "react-scripts test --env=jsdom",
+-   "test": "react-scripts-ts test --env=jsdom",
 +   "test": "react-app-rewired test --env=jsdom --scripts-version react-scripts-ts",
 }
 ```
@@ -132,8 +132,8 @@ module.exports = function override(config, env) {
   tsLoader.options = {
     getCustomTransformers: () => ({
       before: [ tsImportPluginFactory({
-        libraryName: 'antd',
         libraryDirectory: 'es',
+        libraryName: 'antd',
         style: 'css',
       }) ]
     })
@@ -199,6 +199,7 @@ $ yarn add react-app-rewire-less --dev
     };
 
 +   config = rewireLess.withLoaderOptions({
++     javascriptEnabled: true,
 +     modifyVars: { "@primary-color": "#1DA57A" },
 +   })(config, env);
 
@@ -215,8 +216,8 @@ $ yarn add react-app-rewire-less --dev
 
 你也可以根据 [在 create-react-app 中使用](/docs/react/use-with-create-react-app.zh-CN.md) 的介绍使用 [react-app-rewire-typescript][https://github.com/lwd-technology/react-app-rewire-typescript] 自己来配置 TypeScript 的开发环境。
 
-此外，还可以选择 [react-scripts-ts-antd](https://www.npmjs.com/package/react-scripts-ts-antd)，其中已经配置好了 ts-import-plugin、react-app-rewired、scss、less 等常用功能。只需一条命令即可生成一个免配置的 TypeScript 项目.
-```bash
+此外，还可以选择 [react-scripts-ts-antd](https://www.npmjs.com/package/react-scripts-ts-antd)，其中已经配置好了 ts-import-plugin、react-app-rewired、scss、less 等常用功能。只需一条命令即可生成一个免配置的 TypeScript 项目.
+```bash
 $ create-react-app my-project --scripts-version=react-scripts-ts-antd
 ```
 

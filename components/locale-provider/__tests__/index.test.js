@@ -4,7 +4,7 @@ import { mount } from 'enzyme';
 import moment from 'moment';
 import MockDate from 'mockdate';
 import { LocaleProvider, Pagination, DatePicker, TimePicker, Calendar,
-  Popconfirm, Table, Modal, Select, Transfer } from '../../';
+  Popconfirm, Table, Modal, Select, Transfer } from '../..';
 import enGB from '../en_GB';
 import frFR from '../fr_FR';
 import nlBE from '../nl_BE';
@@ -41,8 +41,9 @@ import arEG from '../ar_EG';
 import ukUA from '../uk_UA';
 import zhCN from '../zh_CN';
 import kuIQ from '../ku_IQ';
+import mnMN from '../mn_MN';
 
-const locales = [enUS, ptBR, ptPT, ruRU, esES, svSE, frBE, deDE, nlNL, caES, csCZ, koKR, etEE, skSK, jaJP, trTR, zhTW, fiFI, plPL, bgBG, enGB, frFR, nlBE, itIT, viVN, thTH, faIR, elGR, nbNO, srRS, slSI, isIS, arEG, ukUA, zhCN, kuIQ];
+const locales = [enUS, ptBR, ptPT, ruRU, esES, svSE, frBE, deDE, nlNL, caES, csCZ, koKR, etEE, skSK, jaJP, trTR, zhTW, fiFI, plPL, bgBG, enGB, frFR, nlBE, itIT, viVN, thTH, faIR, elGR, nbNO, srRS, slSI, isIS, arEG, ukUA, zhCN, kuIQ, mnMN];
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -113,6 +114,7 @@ describe('Locale Provider', () => {
           title: 'Hello World!',
         });
       }
+
       render() {
         return null;
       }
@@ -123,7 +125,7 @@ describe('Locale Provider', () => {
           <ModalDemo />
         </LocaleProvider>
       );
-      const currentConfirmNode = document.querySelectorAll('.ant-confirm')[document.querySelectorAll('.ant-confirm').length - 1];
+      const currentConfirmNode = document.querySelectorAll('.ant-modal-confirm')[document.querySelectorAll('.ant-modal-confirm').length - 1];
       let cancelButtonText = currentConfirmNode.querySelectorAll('.ant-btn:not(.ant-btn-primary) span')[0].innerHTML;
       let okButtonText = currentConfirmNode.querySelectorAll('.ant-btn-primary span')[0].innerHTML;
       if (locale.locale === 'zh-cn') {
@@ -142,8 +144,9 @@ describe('Locale Provider', () => {
       }
 
       render() {
+        const { locale } = this.state;
         return (
-          <LocaleProvider locale={this.state.locale}>
+          <LocaleProvider locale={locale}>
             <div>
               <DatePicker defaultValue={moment()} open />
             </div>
