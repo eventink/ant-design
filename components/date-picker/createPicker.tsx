@@ -190,12 +190,18 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       );
 
       const clearIcon = (!props.disabled && props.allowClear && value) ? (
-        <Icon
-          type="close-circle"
-          className={`${prefixCls}-picker-clear`}
-          onClick={this.clearSelection}
-          theme="filled"
-        />
+        props.clearIcon ? (
+          <span onClick={this.clearSelection}>
+            {props.clearIcon}
+          </span>
+        ) : (
+          <Icon
+            type="close-circle"
+            className={`${prefixCls}-picker-clear`}
+            onClick={this.clearSelection}
+            theme="filled"
+          />
+        )
       ) : null;
 
       const inputIcon = suffixIcon && (
@@ -241,7 +247,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
               {...dataOrAriaProps}
             />
             {clearIcon}
-            {inputIcon}
+            {props.pickerIcon || inputIcon}
           </div>
         )
       };
