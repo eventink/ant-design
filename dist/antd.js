@@ -61213,7 +61213,7 @@ function createPicker(TheCalendar) {
                     return __WEBPACK_IMPORTED_MODULE_6_react__["createElement"](
                         'div',
                         null,
-                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('input', { ref: _this2.saveInput, disabled: props.disabled, readOnly: true, value: inputValue, placeholder: placeholder, className: props.pickerInputClass }),
+                        __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('input', { ref: _this2.saveInput, disabled: props.disabled, readOnly: true, value: inputValue, placeholder: placeholder, className: props.pickerInputClass, tabIndex: props.tabIndex }),
                         clearIcon,
                         props.pickerIcon || __WEBPACK_IMPORTED_MODULE_6_react__["createElement"]('span', { className: prefixCls + '-picker-icon' })
                     );
