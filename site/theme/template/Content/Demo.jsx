@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import LZString from 'lz-string';
 import { Icon, Tooltip } from 'antd';
 import EditButton from './EditButton';
+import ErrorBoundary from './ErrorBoundary';
 import BrowserFrame from '../BrowserFrame';
 import { ping } from '../utils';
 
@@ -23,17 +24,13 @@ export default class Demo extends React.Component {
     intl: PropTypes.object,
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      codeExpand: false,
-      sourceCode: '',
-      copied: false,
-      copyTooltipVisible: false,
-      showRiddleButton: false,
-    };
-  }
+  state = {
+    codeExpand: false,
+    sourceCode: '',
+    copied: false,
+    copyTooltipVisible: false,
+    showRiddleButton: false,
+  };
 
   componentWillReceiveProps(nextProps) {
     const { highlightedCode } = nextProps;
@@ -43,9 +40,11 @@ export default class Demo extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return (this.state.codeExpand || this.props.expand) !== (nextState.codeExpand || nextProps.expand)
-      || this.state.copied !== nextState.copied
-      || this.state.copyTooltipVisible !== nextState.copyTooltipVisible;
+    const { codeExpand, copied, copyTooltipVisible } = this.state;
+    const { expand } = this.props;
+    return (codeExpand || expand) !== (nextState.codeExpand || nextProps.expand)
+      || copied !== nextState.copied
+      || copyTooltipVisible !== nextState.copyTooltipVisible;
   }
 
   componentDidMount() {
@@ -65,7 +64,8 @@ export default class Demo extends React.Component {
   }
 
   handleCodeExpand = () => {
-    this.setState({ codeExpand: !this.state.codeExpand });
+    const { codeExpand } = this.state;
+    this.setState({ codeExpand: !codeExpand });
   }
 
   saveAnchor = (anchor) => {
@@ -102,6 +102,7 @@ export default class Demo extends React.Component {
       highlightedStyle,
       expand,
     } = props;
+    const { showRiddleButton, copied } = state;
     if (!this.liveDemo) {
       this.liveDemo = meta.iframe
         ? <BrowserFrame><iframe src={src} height={meta.iframe} title="demo" /></BrowserFrame>
@@ -112,8 +113,7 @@ export default class Demo extends React.Component {
       'code-box': true,
       expand: codeExpand,
     });
-
-    const { locale } = this.context.intl;
+    const { intl: { locale } } = this.context;
     const localizedTitle = meta.title[locale] || meta.title;
     const localizeIntro = content[locale] || content;
     const introChildren = props.utils
@@ -133,13 +133,15 @@ export default class Demo extends React.Component {
     const codepenPrefillConfig = {
       title: `${localizedTitle} - Ant Design Demo`,
       html,
-      js: state.sourceCode.replace(/import\s+\{\s+(.*)\s+\}\s+from\s+'antd';/, 'const { $1 } = antd;'),
+      js: state.sourceCode
+        .replace(/import\s+\{\s+(.*)\s+\}\s+from\s+'antd';/, 'const { $1 } = antd;')
+        .replace("import moment from 'moment';", ''),
       css: prefillStyle,
       editors: '001',
       css_external: 'https://unpkg.com/antd/dist/antd.css',
       js_external: [
-        'react@15.x/dist/react.js',
-        'react-dom@15.x/dist/react-dom.js',
+        'react@16.x/umd/react.development.js',
+        'react-dom@16.x/umd/react-dom.development.js',
         'moment/min/moment-with-locales.js',
         'antd/dist/antd-with-locales.js',
       ].map(url => `https://unpkg.com/${url}`).join(';'),
@@ -184,11 +186,13 @@ ${state.sourceCode.replace('mountNode', 'document.getElementById(\'container\')'
     return (
       <section className={codeBoxClass} id={meta.id}>
         <section className="code-box-demo">
-          {this.liveDemo}
+          <ErrorBoundary>
+            {this.liveDemo}
+          </ErrorBoundary>
           {
-            style ?
-              <style dangerouslySetInnerHTML={{ __html: style }} /> :
-              null
+            style
+              ? <style dangerouslySetInnerHTML={{ __html: style }} />
+              : null
           }
         </section>
         <section className="code-box-meta markdown">
@@ -222,7 +226,7 @@ ${state.sourceCode.replace('mountNode', 'document.getElementById(\'container\')'
         >
           <div className="highlight">
             <div className="code-box-actions">
-              {this.state.showRiddleButton ? (
+              {showRiddleButton ? (
                 <form action="//riddle.alibaba-inc.com/riddles/define" method="POST" target="_blank">
                   <input type="hidden" name="data" value={JSON.stringify(riddlePrefillConfig)} />
                   <Tooltip title={<FormattedMessage id="app.demo.riddle" />}>
@@ -249,11 +253,11 @@ ${state.sourceCode.replace('mountNode', 'document.getElementById(\'container\')'
                 <Tooltip
                   visible={state.copyTooltipVisible}
                   onVisibleChange={this.onCopyTooltipVisibleChange}
-                  title={
+                  title={(
                     <FormattedMessage
-                      id={`app.demo.${state.copied ? 'copied' : 'copy'}`}
+                      id={`app.demo.${copied ? 'copied' : 'copy'}`}
                     />
-                  }
+                  )}
                 >
                   <Icon
                     type={(state.copied && state.copyTooltipVisible) ? 'check' : 'copy'}
@@ -265,13 +269,14 @@ ${state.sourceCode.replace('mountNode', 'document.getElementById(\'container\')'
             {props.utils.toReactComponent(highlightedCode)}
           </div>
           {
-            highlightedStyle ?
-              <div key="style" className="highlight">
-                <pre>
-                  <code className="css" dangerouslySetInnerHTML={{ __html: highlightedStyle }} />
-                </pre>
-              </div> :
-              null
+            highlightedStyle
+              ? (
+                <div key="style" className="highlight">
+                  <pre>
+                    <code className="css" dangerouslySetInnerHTML={{ __html: highlightedStyle }} />
+                  </pre>
+                </div>
+              ) : null
           }
         </section>
       </section>

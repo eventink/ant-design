@@ -28,17 +28,17 @@ export default {
   },
   Transfer: {
     notFoundContent: 'Ничего не найдено',
-    searchPlaceholder: 'Введите название для поиска',
-    itemUnit: 'item',
-    itemsUnit: 'items',
+    searchPlaceholder: 'Поиск',
+    itemUnit: 'элем.',
+    itemsUnit: 'элем.',
   },
   Select: {
     notFoundContent: 'Ничего не найдено',
   },
   Upload: {
-    uploading: 'Закачиваю...',
+    uploading: 'Загрузка...',
     removeFile: 'Удалить файл',
-    uploadError: 'Ошибка при закачке',
+    uploadError: 'При загрузке произошла ошибка',
     previewFile: 'Предпросмотр файла',
   },
 };

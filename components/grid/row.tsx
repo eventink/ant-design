@@ -2,7 +2,7 @@
 // https://github.com/WickyNilliams/enquire.js/issues/82
 let enquire: any;
 if (typeof window !== 'undefined') {
-  const matchMediaPolyfill = (mediaQuery: string): MediaQueryList => {
+  const matchMediaPolyfill = (mediaQuery: string) => {
     return {
       media: mediaQuery,
       matches: false,
@@ -17,22 +17,15 @@ if (typeof window !== 'undefined') {
 }
 
 import * as React from 'react';
-import { Children, cloneElement } from 'react';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
+import RowContext from './RowContext';
 
 export type Breakpoint = 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
-export type BreakpointMap = {
-  xs?: string;
-  sm?: string;
-  md?: string;
-  lg?: string;
-  xl?: string;
-  xxl?: string
-};
+export type BreakpointMap = Partial<Record<Breakpoint, string>>;
 
 export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
-  gutter?: number | BreakpointMap;
+  gutter?: number | Partial<Record<Breakpoint, number>>;
   type?: 'flex';
   align?: 'top' | 'middle' | 'bottom';
   justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between';
@@ -107,7 +100,7 @@ export default class Row extends React.Component<RowProps, RowState> {
     Object.keys(responsiveMap)
       .map((screen: Breakpoint) => enquire.unregister(responsiveMap[screen]));
   }
-  getGutter() {
+  getGutter(): number | undefined {
     const { gutter } = this.props;
     if (typeof gutter === 'object') {
       for (let i = 0; i <= responsiveArray.length; i++) {
@@ -117,12 +110,12 @@ export default class Row extends React.Component<RowProps, RowState> {
         }
       }
     }
-    return gutter;
+    return gutter as number;
   }
   render() {
     const {
       type, justify, align, className, style, children,
-      prefixCls = 'ant-row', ...others,
+      prefixCls = 'ant-row', ...others
     } = this.props;
     const gutter = this.getGutter();
     const classes = classNames({
@@ -136,23 +129,14 @@ export default class Row extends React.Component<RowProps, RowState> {
       marginRight: (gutter as number) / -2,
       ...style,
     } : style;
-    const cols = Children.map(children, (col: React.ReactElement<HTMLDivElement>) => {
-      if (!col) {
-        return null;
-      }
-      if (col.props && (gutter as number) > 0) {
-        return cloneElement(col, {
-          style: {
-            paddingLeft: (gutter as number) / 2,
-            paddingRight: (gutter as number) / 2,
-            ...col.props.style,
-          },
-        });
-      }
-      return col;
-    });
     const otherProps = { ...others };
     delete otherProps.gutter;
-    return <div {...otherProps} className={classes} style={rowStyle}>{cols}</div>;
+    return (
+      <RowContext.Provider value={{ gutter }}>
+        <div {...otherProps} className={classes} style={rowStyle}>
+          {children}
+        </div>
+      </RowContext.Provider>
+    );
   }
 }

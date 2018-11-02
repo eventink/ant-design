@@ -84,6 +84,46 @@ describe('Table.filter', () => {
     expect(dropdownWrapper).toMatchSnapshot();
   });
 
+  it('override custom filter correctly', () => {
+    const filter = ({ prefixCls, setSelectedKeys, confirm, clearFilters }) => {
+      return (
+        <div className={`${prefixCls}-view`} id="customFilter">
+          <span onClick={() => setSelectedKeys([42])} id="setSelectedKeys">setSelectedKeys</span>
+          <span onClick={() => confirm()} id="confirm">Confirm</span>
+          <span onClick={() => clearFilters()} id="reset">Reset</span>
+        </div>
+      );
+    };
+
+    const wrapper = mount(createTable({
+      columns: [{
+        ...column,
+        filterDropdown: filter,
+      }],
+    }));
+
+    const filterMenu = wrapper.find('FilterMenu').instance();
+
+    // check if renderer well
+    wrapper.find('i.ant-dropdown-trigger').simulate('click');
+    expect(wrapper.find('#customFilter')).toMatchSnapshot();
+
+    // try to use reset btn
+    expect(filterMenu.state.selectedKeys).toEqual([]);
+    wrapper.find('#setSelectedKeys').simulate('click');
+    expect(filterMenu.state.selectedKeys).toEqual([42]);
+    wrapper.find('#reset').simulate('click');
+    expect(filterMenu.state.selectedKeys).toEqual([]);
+
+    // try to use confirm btn
+    wrapper.find('i.ant-dropdown-trigger').simulate('click');
+    wrapper.find('#setSelectedKeys').simulate('click');
+    expect(filterMenu.state.visible).toBe(true);
+    wrapper.find('#confirm').simulate('click');
+    expect(filterMenu.state.selectedKeys).toEqual([42]);
+    expect(filterMenu.state.visible).toBe(false);
+  });
+
   it('can be controlled by filterDropdownVisible', () => {
     const wrapper = mount(createTable({
       columns: [{
@@ -104,6 +144,22 @@ describe('Table.filter', () => {
 
     dropdown = wrapper.find('Dropdown').first();
     expect(dropdown.props().visible).toBe(false);
+  });
+
+  it('if the filter is visible it should ignore the selectedKeys changes', () => {
+    const wrapper = mount(createTable({
+      columns: [{
+        ...column,
+        filterDropdownVisible: true,
+      }],
+    }));
+
+    const filterMenu = wrapper.find('FilterMenu').instance();
+    expect(filterMenu.state.selectedKeys).toEqual([]);
+    wrapper.find('FilterMenu').find('input[type="checkbox"]').first().simulate('click');
+    expect(filterMenu.state.selectedKeys).toEqual(['boy']);
+    wrapper.setProps({ dataSource: [...data, { key: 999, name: 'Chris' }] });
+    expect(filterMenu.state.selectedKeys).toEqual(['boy']);
   });
 
   it('fires change event when visible change', () => {
@@ -164,7 +220,24 @@ describe('Table.filter', () => {
     dropdownWrapper.find('MenuItem').first().simulate('click');
     dropdownWrapper.find('.confirm').simulate('click');
 
-    expect(handleChange).toBeCalledWith({}, { name: ['boy'] }, {});
+    expect(handleChange).toBeCalledWith(
+      {},
+      { name: ['boy'] },
+      {},
+      {
+        currentDataSource: [],
+      }
+    );
+  });
+
+  it('should not fire change event on close filterDropdown without changing anything', () => {
+    const handleChange = jest.fn();
+    const wrapper = mount(createTable({ onChange: handleChange }));
+    const dropdownWrapper = mount(wrapper.find('Trigger').instance().getComponent());
+
+    dropdownWrapper.find('.clear').simulate('click');
+
+    expect(handleChange).not.toHaveBeenCalled();
   });
 
   it('three levels menu', () => {
@@ -223,6 +296,7 @@ describe('Table.filter', () => {
       }
 
       render() {
+        const { filters } = this.state;
         return (
           <Table dataSource={data} onChange={this.handleChange}>
             <Column
@@ -233,7 +307,7 @@ describe('Table.filter', () => {
                 { text: 'Jack', value: 'Jack' },
                 { text: 'Lucy', value: 'Lucy' },
               ]}
-              filteredValue={this.state.filters.name}
+              filteredValue={filters.name}
               onFilter={filterFn}
             />
           </Table>
@@ -310,5 +384,25 @@ describe('Table.filter', () => {
     wrapper.find('.ant-dropdown-trigger').first().simulate('click');
 
     expect(handleChange).toBeCalled();
+    expect(handleChange.mock.calls[0][3].currentDataSource.length).toBe(1);
+  });
+
+  it('renders custom filter icon correctly', () => {
+    const wrapper = mount(createTable({
+      columns: [{
+        ...column,
+        filterIcon: filtered => <span>{filtered ? 'filtered' : 'unfiltered'}</span>,
+      }],
+    }));
+
+    wrapper.find('.ant-dropdown-trigger').first().simulate('click');
+    wrapper.find('.ant-dropdown-menu-item').first().simulate('click');
+    wrapper.find('.ant-dropdown-trigger').first().simulate('click');
+    expect(wrapper.find('.ant-table-filter-icon').render()).toMatchSnapshot();
+
+    wrapper.find('.ant-dropdown-trigger').first().simulate('click');
+    wrapper.find('.ant-dropdown-menu-item').first().simulate('click');
+    wrapper.find('.ant-dropdown-trigger').first().simulate('click');
+    expect(wrapper.find('.ant-table-filter-icon').render()).toMatchSnapshot();
   });
 });

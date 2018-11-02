@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import Animate from 'rc-animate';
 import ScrollNumber from './ScrollNumber';
 import classNames from 'classnames';
@@ -8,7 +8,7 @@ export { ScrollNumberProps } from './ScrollNumber';
 
 export interface BadgeProps {
   /** Number to show in badge */
-  count?: number | string;
+  count?: number | string | null;
   showZero?: boolean;
   /** Max count to show */
   overflowCount?: number;
@@ -21,6 +21,7 @@ export interface BadgeProps {
   status?: 'success' | 'processing' | 'default' | 'error' | 'warning';
   text?: string;
   offset?: [number | string, number | string];
+  title?: string;
 }
 
 export default class Badge extends React.Component<BadgeProps, any> {
@@ -57,7 +58,8 @@ export default class Badge extends React.Component<BadgeProps, any> {
       status,
       text,
       offset,
-      ...restProps,
+      title,
+      ...restProps
     } = this.props;
     let displayCount = (count as number) > (overflowCount as number) ? `${overflowCount}+` : count;
     const isZero = displayCount === '0' || displayCount === 0;
@@ -83,14 +85,14 @@ export default class Badge extends React.Component<BadgeProps, any> {
       [`${prefixCls}-not-a-wrapper`]: !children,
     });
     const styleWithOffset = offset ? {
-      marginTop: offset[0],
-      marginLeft: offset[1],
+      right: -parseInt(offset[0] as string, 10),
+      marginTop: offset[1],
       ...style,
     } : style;
     // <Badge status="success" />
     if (!children && status) {
       return (
-        <span className={badgeCls} style={styleWithOffset}>
+        <span {...restProps} className={badgeCls} style={styleWithOffset}>
           <span className={statusCls} />
           <span className={`${prefixCls}-status-text`}>{text}</span>
         </span>
@@ -103,8 +105,9 @@ export default class Badge extends React.Component<BadgeProps, any> {
         data-show={!hidden}
         className={scrollNumberCls}
         count={displayCount}
-        title={count}
+        title={title || count}
         style={styleWithOffset}
+        key="scrollNumber"
       />
     );
 

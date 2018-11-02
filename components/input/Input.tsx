@@ -1,50 +1,27 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import omit from 'omit.js';
 import Group from './Group';
 import Search from './Search';
 import TextArea from './TextArea';
+import { Omit } from '../_util/type';
 
-function fixControlledValue(value: undefined | null | string) {
+function fixControlledValue<T>(value: T) {
   if (typeof value === 'undefined' || value === null) {
     return '';
   }
   return value;
 }
 
-export interface AbstractInputProps {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
   prefixCls?: string;
-  className?: string;
-  defaultValue?: any;
-  value?: any;
-  tabIndex?: number;
-  style?: React.CSSProperties;
-}
-
-export interface InputProps extends AbstractInputProps {
-  placeholder?: string;
-  type?: string;
-  id?: number | string;
-  name?: string;
   size?: 'large' | 'default' | 'small';
-  maxLength?: number | string;
-  disabled?: boolean;
-  readOnly?: boolean;
+  onPressEnter?: React.KeyboardEventHandler<HTMLInputElement>;
   addonBefore?: React.ReactNode;
   addonAfter?: React.ReactNode;
-  onPressEnter?: React.FormEventHandler<HTMLInputElement>;
-  onKeyDown?: React.FormEventHandler<HTMLInputElement>;
-  onKeyUp?: React.FormEventHandler<HTMLInputElement>;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  onClick?: React.FormEventHandler<HTMLInputElement>;
-  onFocus?: React.FormEventHandler<HTMLInputElement>;
-  onBlur?: React.FormEventHandler<HTMLInputElement>;
-  autoComplete?: string;
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
-  spellCheck?: boolean;
-  autoFocus?: boolean;
 }
 
 export default class Input extends React.Component<InputProps, any> {
@@ -76,7 +53,6 @@ export default class Input extends React.Component<InputProps, any> {
     addonBefore: PropTypes.node,
     addonAfter: PropTypes.node,
     prefixCls: PropTypes.string,
-    autosize: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     onPressEnter: PropTypes.func,
     onKeyDown: PropTypes.func,
     onKeyUp: PropTypes.func,
@@ -104,6 +80,10 @@ export default class Input extends React.Component<InputProps, any> {
 
   blur() {
     this.input.blur();
+  }
+
+  select() {
+    this.input.select();
   }
 
   getInputClassName() {
@@ -151,25 +131,16 @@ export default class Input extends React.Component<InputProps, any> {
 
     // Need another wrapper for changing display:table to display:inline-block
     // and put style prop in wrapper
-    if (addonBefore || addonAfter) {
-      return (
-        <span
-          className={groupClassName}
-          style={props.style}
-        >
-          <span className={className}>
-            {addonBefore}
-            {React.cloneElement(children, { style: null })}
-            {addonAfter}
-          </span>
-        </span>
-      );
-    }
     return (
-      <span className={className}>
-        {addonBefore}
-        {children}
-        {addonAfter}
+      <span
+        className={groupClassName}
+        style={props.style}
+      >
+        <span className={className}>
+          {addonBefore}
+          {React.cloneElement(children, { style: null })}
+          {addonAfter}
+        </span>
       </span>
     );
   }

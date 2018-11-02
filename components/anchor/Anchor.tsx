@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import addEventListener from 'rc-util/lib/Dom/addEventListener';
 import Affix from '../affix';
 import AnchorLink from './AnchorLink';
 import getScroll from '../_util/getScroll';
-import getRequestAnimationFrame from '../_util/getRequestAnimationFrame';
+import raf from 'raf';
 
 function getDefaultContainer() {
   return window;
@@ -25,7 +25,7 @@ function getOffsetTop(element: HTMLElement, container: AnchorContainer): number 
 
   if (rect.width || rect.height) {
     if (container === window) {
-      container = element.ownerDocument.documentElement;
+      container = element.ownerDocument!.documentElement!;
       return rect.top - container.clientTop;
     }
     return rect.top - (container as HTMLElement).getBoundingClientRect().top;
@@ -43,7 +43,6 @@ function easeInOutCubic(t: number, b: number, c: number, d: number) {
   return cc / 2 * ((t -= 2) * t * t + 2) + b;
 }
 
-const reqAnimFrame = getRequestAnimationFrame();
 const sharpMatcherRegx = /#([^#]+)$/;
 function scrollTo(href: string, offsetTop = 0, getContainer: () => AnchorContainer, callback = () => { }) {
   const container = getContainer();
@@ -67,17 +66,16 @@ function scrollTo(href: string, offsetTop = 0, getContainer: () => AnchorContain
       (container as HTMLElement).scrollTop = nextScrollTop;
     }
     if (time < 450) {
-      reqAnimFrame(frameFunc);
+      raf(frameFunc);
     } else {
       callback();
     }
   };
-  reqAnimFrame(frameFunc);
-  history.pushState(null, '', href);
+  raf(frameFunc);
 }
 
 type Section = {
-  link: String;
+  link: string;
   top: number;
 };
 
@@ -93,6 +91,11 @@ export interface AnchorProps {
   affix?: boolean;
   showInkInFixed?: boolean;
   getContainer?: () => AnchorContainer;
+  onClick?: (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode, href: string }) => void;
+}
+
+export interface AnchorState {
+  activeLink: null | string;
 }
 
 export interface AnchorDefaultProps extends AnchorProps {
@@ -102,7 +105,15 @@ export interface AnchorDefaultProps extends AnchorProps {
   getContainer: () => AnchorContainer;
 }
 
-export default class Anchor extends React.Component<AnchorProps, any> {
+export interface AntAnchor {
+  registerLink: (link: string) => void;
+  unregisterLink: (link: string) => void;
+  activeLink: string | null;
+  scrollTo: (link: string) => void;
+  onClick?: (e: React.MouseEvent<HTMLElement>, link: { title: React.ReactNode, href: string }) => void;
+}
+
+export default class Anchor extends React.Component<AnchorProps, AnchorState> {
   static Link: typeof AnchorLink;
 
   static defaultProps = {
@@ -116,38 +127,34 @@ export default class Anchor extends React.Component<AnchorProps, any> {
     antAnchor: PropTypes.object,
   };
 
+  state = {
+    activeLink: null,
+  };
+
   private inkNode: HTMLSpanElement;
 
-  private links: String[];
+  private links: string[] = [];
   private scrollEvent: any;
   private animating: boolean;
 
-  constructor(props: AnchorProps) {
-    super(props);
-    this.state = {
-      activeLink: null,
-    };
-    this.links = [];
-  }
-
   getChildContext() {
-    return {
-      antAnchor: {
-        registerLink: (link: String) => {
-          if (!this.links.includes(link)) {
-            this.links.push(link);
-          }
-        },
-        unregisterLink: (link: String) => {
-          const index = this.links.indexOf(link);
-          if (index !== -1) {
-            this.links.splice(index, 1);
-          }
-        },
-        activeLink: this.state.activeLink,
-        scrollTo: this.handleScrollTo,
+    const antAnchor: AntAnchor = {
+      registerLink: (link: string) => {
+        if (!this.links.includes(link)) {
+          this.links.push(link);
+        }
       },
+      unregisterLink: (link: string) => {
+        const index = this.links.indexOf(link);
+        if (index !== -1) {
+          this.links.splice(index, 1);
+        }
+      },
+      activeLink: this.state.activeLink,
+      scrollTo: this.handleScrollTo,
+      onClick: this.props.onClick,
     };
+    return { antAnchor };
   }
 
   componentDidMount() {
@@ -185,7 +192,7 @@ export default class Anchor extends React.Component<AnchorProps, any> {
     });
   }
 
-  getCurrentAnchor(offsetTop = 0, bounds = 5) {
+  getCurrentAnchor(offsetTop = 0, bounds = 5): string {
     let activeLink = '';
     if (typeof document === 'undefined') {
       return activeLink;
@@ -241,6 +248,7 @@ export default class Anchor extends React.Component<AnchorProps, any> {
       affix,
       showInkInFixed,
       children,
+      getContainer,
     } = this.props;
     const { activeLink } = this.state;
 
@@ -274,7 +282,7 @@ export default class Anchor extends React.Component<AnchorProps, any> {
     );
 
     return !affix ? anchorContent : (
-      <Affix offsetTop={offsetTop}>
+      <Affix offsetTop={offsetTop} target={getContainer}>
         {anchorContent}
       </Affix>
     );
