@@ -220,7 +220,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
 
       const dataOrAriaProps = getDataOrAriaProps(props);
 
-      const input = ({ value: inputValue }: { value: moment.Moment | moment.Moment[] | null }) => {
+      const input = ({ value: inputValue }: { value: any }) => {
         let formattedInputValue = '';
 
         if (inputValue) {
