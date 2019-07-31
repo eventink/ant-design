@@ -978,6 +978,26 @@ exports[`renders ./components/date-picker/demo/mode.md correctly 1`] = `
 </div>
 `;
 
+exports[`renders ./components/date-picker/demo/multiple.md correctly 1`] = `
+<div>
+  <span
+    class="ant-calendar-picker"
+  >
+    <div>
+      <input
+        class="ant-calendar-picker-input ant-input"
+        placeholder="Select date"
+        readonly=""
+        value=""
+      />
+      <span
+        class="ant-calendar-picker-icon"
+      />
+    </div>
+  </span>
+</div>
+`;
+
 exports[`renders ./components/date-picker/demo/presetted-ranges.md correctly 1`] = `
 <div>
   <span
