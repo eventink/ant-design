@@ -1,19 +1,14 @@
-/// <reference types="react" />
+import { ConfigConsumerProps } from '../config-provider';
 import * as React from 'react';
-export declare type Breakpoint = 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
-export declare type BreakpointMap = {
-    xs?: string;
-    sm?: string;
-    md?: string;
-    lg?: string;
-    xl?: string;
-    xxl?: string;
-};
+import * as PropTypes from 'prop-types';
+import { Breakpoint, BreakpointMap } from '../_util/responsiveObserve';
+declare const RowAligns: ["top", "middle", "bottom"];
+declare const RowJustify: ["start", "end", "center", "space-around", "space-between"];
 export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
-    gutter?: number | BreakpointMap;
+    gutter?: number | Partial<Record<Breakpoint, number>>;
     type?: 'flex';
-    align?: 'top' | 'middle' | 'bottom';
-    justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between';
+    align?: (typeof RowAligns)[number];
+    justify?: (typeof RowJustify)[number];
     prefixCls?: string;
 }
 export interface RowState {
@@ -24,17 +19,20 @@ export default class Row extends React.Component<RowProps, RowState> {
         gutter: number;
     };
     static propTypes: {
-        type: any;
-        align: any;
-        justify: any;
-        className: any;
-        children: any;
-        gutter: any;
-        prefixCls: any;
+        type: PropTypes.Requireable<"flex">;
+        align: PropTypes.Requireable<"top" | "middle" | "bottom">;
+        justify: PropTypes.Requireable<"start" | "center" | "end" | "space-around" | "space-between">;
+        className: PropTypes.Requireable<string>;
+        children: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        gutter: PropTypes.Requireable<number | object>;
+        prefixCls: PropTypes.Requireable<string>;
     };
     state: RowState;
+    token: string;
     componentDidMount(): void;
     componentWillUnmount(): void;
-    getGutter(): string | number | BreakpointMap | undefined;
+    getGutter(): number | undefined;
+    renderRow: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

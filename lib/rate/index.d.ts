@@ -1,5 +1,6 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import { ConfigConsumerProps } from '../config-provider';
 export interface RateProps {
     prefixCls?: string;
     count?: number;
@@ -8,24 +9,30 @@ export interface RateProps {
     allowHalf?: boolean;
     allowClear?: boolean;
     disabled?: boolean;
-    onChange?: (value: number) => any;
-    onHoverChange?: (value: number) => any;
+    tooltips?: Array<string>;
+    onChange?: (value: number) => void;
+    onHoverChange?: (value: number) => void;
     character?: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
 }
+interface RateNodeProps {
+    index: number;
+}
 export default class Rate extends React.Component<RateProps, any> {
     static propTypes: {
-        prefixCls: any;
-        character: any;
+        prefixCls: PropTypes.Requireable<string>;
+        character: PropTypes.Requireable<PropTypes.ReactNodeLike>;
     };
     static defaultProps: {
-        prefixCls: string;
         character: JSX.Element;
     };
     private rcRate;
     focus(): void;
     blur(): void;
     saveRate: (node: any) => void;
+    characterRender: (node: React.ReactNode, { index }: RateNodeProps) => {} | null | undefined;
+    renderRate: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

@@ -1,13 +1,12 @@
-/// <reference types="react" />
 import * as React from 'react';
 import Dragger from './Dragger';
 import { RcFile, UploadProps, UploadState, UploadFile, UploadLocale, UploadChangeParam, UploadType, UploadListType } from './interface';
 import { T } from './utils';
+import { ConfigConsumerProps } from '../config-provider';
 export { UploadProps };
-export default class Upload extends React.Component<UploadProps, UploadState> {
+declare class Upload extends React.Component<UploadProps, UploadState> {
     static Dragger: typeof Dragger;
     static defaultProps: {
-        prefixCls: string;
         type: UploadType;
         multiple: boolean;
         action: string;
@@ -20,9 +19,12 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
         disabled: boolean;
         supportServerRender: boolean;
     };
+    static getDerivedStateFromProps(nextProps: UploadProps): {
+        fileList: UploadFile[];
+    } | null;
     recentUploadStatus: boolean | PromiseLike<any>;
     progressTimer: any;
-    private upload;
+    upload: any;
     constructor(props: UploadProps);
     componentWillUnmount(): void;
     onStart: (file: RcFile) => void;
@@ -34,12 +36,13 @@ export default class Upload extends React.Component<UploadProps, UploadState> {
     onError: (error: Error, response: any, file: UploadFile) => void;
     handleRemove(file: UploadFile): void;
     handleManualRemove: (file: UploadFile) => void;
-    onChange: (info: UploadChangeParam) => void;
-    componentWillReceiveProps(nextProps: UploadProps): void;
+    onChange: (info: UploadChangeParam<UploadFile>) => void;
     onFileDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-    beforeUpload: (file: RcFile, fileList: RcFile[]) => boolean | PromiseLike<any>;
+    beforeUpload: (file: RcFile, fileList: RcFile[]) => boolean | PromiseLike<void>;
     clearProgressTimer(): void;
     saveUpload: (node: any) => void;
     renderUploadList: (locale: UploadLocale) => JSX.Element;
+    renderUpload: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default Upload;

@@ -1,13 +1,12 @@
-/// <reference types="react" />
 import * as React from 'react';
 import { AbstractTooltipProps, TooltipPlacement, TooltipTrigger } from '../tooltip';
+import { ConfigConsumerProps } from '../config-provider';
 export interface PopoverProps extends AbstractTooltipProps {
     title?: React.ReactNode;
     content?: React.ReactNode;
 }
 export default class Popover extends React.Component<PopoverProps, {}> {
     static defaultProps: {
-        prefixCls: string;
         placement: TooltipPlacement;
         transitionName: string;
         trigger: TooltipTrigger;
@@ -17,7 +16,8 @@ export default class Popover extends React.Component<PopoverProps, {}> {
     };
     private tooltip;
     getPopupDomNode(): any;
-    getOverlay(): JSX.Element;
+    getOverlay(prefixCls: string): JSX.Element;
     saveTooltip: (node: any) => void;
+    renderPopover: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }

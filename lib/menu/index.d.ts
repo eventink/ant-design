@@ -1,23 +1,22 @@
-/// <reference types="react" />
 import * as React from 'react';
 import SubMenu from './SubMenu';
 import Item from './MenuItem';
-import { SiderContext } from '../layout/Sider';
+import { SiderContextProps } from '../layout/Sider';
+import { MenuTheme } from './MenuContext';
 export interface SelectParam {
     key: string;
     keyPath: Array<string>;
     item: any;
-    domEvent: any;
+    domEvent: Event;
     selectedKeys: Array<string>;
 }
 export interface ClickParam {
     key: string;
     keyPath: Array<string>;
     item: any;
-    domEvent: any;
+    domEvent: Event;
 }
 export declare type MenuMode = 'vertical' | 'vertical-left' | 'vertical-right' | 'horizontal' | 'inline';
-export declare type MenuTheme = 'light' | 'dark';
 export interface MenuProps {
     id?: string;
     theme?: MenuTheme;
@@ -41,43 +40,25 @@ export interface MenuProps {
     inlineCollapsed?: boolean;
     subMenuCloseDelay?: number;
     subMenuOpenDelay?: number;
-    getPopupContainer?: (triggerNode: Element) => HTMLElement;
+    focusable?: boolean;
+    onMouseEnter?: (e: MouseEvent) => void;
+    getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+    overflowedIndicator?: React.ReactNode;
+    forceSubMenuRender?: boolean;
 }
+declare type InternalMenuProps = MenuProps & SiderContextProps;
 export interface MenuState {
     openKeys: string[];
+    switchingModeFromInline: boolean;
+    inlineOpenKeys: string[];
+    prevProps: InternalMenuProps;
+    mounted: boolean;
 }
-export default class Menu extends React.Component<MenuProps, MenuState> {
+export default class Menu extends React.Component<MenuProps, {}> {
     static Divider: any;
     static Item: typeof Item;
     static SubMenu: typeof SubMenu;
     static ItemGroup: any;
-    static defaultProps: {
-        prefixCls: string;
-        className: string;
-        theme: MenuTheme;
-    };
-    static childContextTypes: {
-        inlineCollapsed: any;
-        antdMenuTheme: any;
-    };
-    static contextTypes: {
-        siderCollapsed: any;
-        collapsedWidth: any;
-    };
-    switchModeFromInline: boolean;
-    leaveAnimationExecutedWhenInlineCollapsed: boolean;
-    inlineOpenKeys: string[];
-    constructor(props: MenuProps);
-    getChildContext(): {
-        inlineCollapsed: any;
-        antdMenuTheme: "light" | "dark" | undefined;
-    };
-    componentWillReceiveProps(nextProps: MenuProps, nextContext: SiderContext): void;
-    handleClick: (e: ClickParam) => void;
-    handleOpenChange: (openKeys: string[]) => void;
-    setOpenKeys(openKeys: string[]): void;
-    getRealMenuMode(): "inline" | "horizontal" | "vertical" | "vertical-left" | "vertical-right" | undefined;
-    getInlineCollapsed(): any;
-    getMenuOpenAnimation(menuMode: MenuMode): Object | undefined;
-    render(): JSX.Element | null;
+    render(): JSX.Element;
 }
+export {};

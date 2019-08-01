@@ -1,8 +1,8 @@
-/// <reference types="react" />
 import * as React from 'react';
 export interface PaginationProps {
     total?: number;
     defaultCurrent?: number;
+    disabled?: boolean;
     current?: number;
     defaultPageSize?: number;
     pageSize?: number;
@@ -11,7 +11,9 @@ export interface PaginationProps {
     showSizeChanger?: boolean;
     pageSizeOptions?: string[];
     onShowSizeChange?: (current: number, size: number) => void;
-    showQuickJumper?: boolean;
+    showQuickJumper?: boolean | {
+        goButton?: React.ReactNode;
+    };
     showTotal?: (total: number, range: [number, number]) => React.ReactNode;
     size?: string;
     simple?: boolean;
@@ -20,14 +22,21 @@ export interface PaginationProps {
     className?: string;
     prefixCls?: string;
     selectPrefixCls?: string;
-    itemRender?: (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next') => React.ReactNode;
+    itemRender?: (page: number, type: 'page' | 'prev' | 'next' | 'jump-prev' | 'jump-next', originalElement: React.ReactElement<HTMLElement>) => React.ReactNode;
+    role?: string;
+    showLessItems?: boolean;
+}
+export interface PaginationConfig extends PaginationProps {
+    position?: 'top' | 'bottom' | 'both';
 }
 export declare type PaginationLocale = any;
 export default class Pagination extends React.Component<PaginationProps, {}> {
-    static defaultProps: {
-        prefixCls: string;
-        selectPrefixCls: string;
+    getIconsProps: (prefixCls: string) => {
+        prevIcon: JSX.Element;
+        nextIcon: JSX.Element;
+        jumpPrevIcon: JSX.Element;
+        jumpNextIcon: JSX.Element;
     };
-    renderPagination: (locale: any) => JSX.Element;
+    renderPagination: (contextLocale: any) => JSX.Element;
     render(): JSX.Element;
 }

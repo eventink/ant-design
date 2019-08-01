@@ -1,19 +1,32 @@
-/// <reference types="react" />
 import * as React from 'react';
 import Input from '../input';
+import { ConfigConsumerProps, RenderEmptyHandler } from '../config-provider';
 export interface CascaderOptionType {
-    value: string;
-    label: React.ReactNode;
+    value?: string;
+    label?: React.ReactNode;
     disabled?: boolean;
+    isLeaf?: boolean;
+    loading?: boolean;
     children?: Array<CascaderOptionType>;
-    __IS_FILTERED_OPTION?: boolean;
+    [key: string]: any;
+}
+export interface FieldNamesType {
+    value?: string;
+    label?: string;
+    children?: string;
+}
+export interface FilledFieldNamesType {
+    value: string;
+    label: string;
+    children: string;
 }
 export declare type CascaderExpandTrigger = 'click' | 'hover';
 export interface ShowSearchType {
-    filter?: (inputValue: string, path: CascaderOptionType[]) => boolean;
-    render?: (inputValue: string, path: CascaderOptionType[], prefixCls: string | undefined) => React.ReactNode;
-    sort?: (a: CascaderOptionType[], b: CascaderOptionType[], inputValue: string) => number;
+    filter?: (inputValue: string, path: CascaderOptionType[], names: FilledFieldNamesType) => boolean;
+    render?: (inputValue: string, path: CascaderOptionType[], prefixCls: string | undefined, names: FilledFieldNamesType) => React.ReactNode;
+    sort?: (a: CascaderOptionType[], b: CascaderOptionType[], inputValue: string, names: FilledFieldNamesType) => number;
     matchInputWidth?: boolean;
+    limit?: number | false;
 }
 export interface CascaderProps {
     /** 可选项数据源 */
@@ -53,45 +66,52 @@ export interface CascaderProps {
     onPopupVisibleChange?: (popupVisible: boolean) => void;
     prefixCls?: string;
     inputPrefixCls?: string;
-    getPopupContainer?: (triggerNode?: HTMLElement) => HTMLElement;
+    getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
     popupVisible?: boolean;
+    /** use this after antd@3.7.0 */
+    fieldNames?: FieldNamesType;
+    /** typo props name before antd@3.7.0 */
+    filedNames?: FieldNamesType;
+    suffixIcon?: React.ReactNode;
 }
 export interface CascaderState {
     inputFocused: boolean;
     inputValue: string;
     value: string[];
     popupVisible: boolean | undefined;
-    flattenOptions: CascaderOptionType[][];
+    flattenOptions: CascaderOptionType[][] | undefined;
+    prevProps: CascaderProps;
 }
-export default class Cascader extends React.Component<CascaderProps, CascaderState> {
+interface CascaderLocale {
+    placeholder?: string;
+}
+declare class Cascader extends React.Component<CascaderProps, CascaderState> {
     static defaultProps: {
-        prefixCls: string;
-        inputPrefixCls: string;
         placeholder: string;
         transitionName: string;
         popupPlacement: string;
         options: never[];
         disabled: boolean;
         allowClear: boolean;
-        notFoundContent: string;
     };
+    static getDerivedStateFromProps(nextProps: CascaderProps, { prevProps }: CascaderState): Partial<CascaderState>;
     cachedOptions: CascaderOptionType[];
     private input;
     constructor(props: CascaderProps);
-    componentWillReceiveProps(nextProps: CascaderProps): void;
-    handleChange: (value: any, selectedOptions: any[]) => void;
+    handleChange: (value: any, selectedOptions: CascaderOptionType[]) => void;
     handlePopupVisibleChange: (popupVisible: boolean) => void;
     handleInputBlur: () => void;
-    handleInputClick: (e: React.MouseEvent<HTMLInputElement>) => void;
+    handleInputClick: (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
     handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    setValue: (value: string[], selectedOptions?: any[]) => void;
+    setValue: (value: string[], selectedOptions?: CascaderOptionType[]) => void;
     getLabel(): any;
-    clearSelection: (e: React.MouseEvent<HTMLElement>) => void;
-    flattenTree(options: CascaderOptionType[], changeOnSelect: boolean | undefined, ancestor?: CascaderOptionType[]): any;
-    generateFilteredOptions(prefixCls: string | undefined): CascaderOptionType[];
+    clearSelection: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+    generateFilteredOptions(prefixCls: string | undefined, renderEmpty: RenderEmptyHandler): CascaderOptionType[];
     focus(): void;
     blur(): void;
     saveInput: (node: Input) => void;
+    renderCascader: ({ getPopupContainer: getContextPopupContainer, getPrefixCls, renderEmpty }: ConfigConsumerProps, locale: CascaderLocale) => JSX.Element;
     render(): JSX.Element;
 }
+export default Cascader;

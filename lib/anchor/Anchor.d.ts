@@ -1,6 +1,8 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import AnchorLink from './AnchorLink';
+import { ConfigConsumerProps } from '../config-provider';
+declare function getDefaultContainer(): Window;
 export declare type AnchorContainer = HTMLElement | Window;
 export interface AnchorProps {
     prefixCls?: string;
@@ -12,6 +14,13 @@ export interface AnchorProps {
     affix?: boolean;
     showInkInFixed?: boolean;
     getContainer?: () => AnchorContainer;
+    onClick?: (e: React.MouseEvent<HTMLElement>, link: {
+        title: React.ReactNode;
+        href: string;
+    }) => void;
+}
+export interface AnchorState {
+    activeLink: null | string;
 }
 export interface AnchorDefaultProps extends AnchorProps {
     prefixCls: string;
@@ -19,37 +28,47 @@ export interface AnchorDefaultProps extends AnchorProps {
     showInkInFixed: boolean;
     getContainer: () => AnchorContainer;
 }
-export default class Anchor extends React.Component<AnchorProps, any> {
+export interface AntAnchor {
+    registerLink: (link: string) => void;
+    unregisterLink: (link: string) => void;
+    activeLink: string | null;
+    scrollTo: (link: string) => void;
+    onClick?: (e: React.MouseEvent<HTMLElement>, link: {
+        title: React.ReactNode;
+        href: string;
+    }) => void;
+}
+export default class Anchor extends React.Component<AnchorProps, AnchorState> {
     static Link: typeof AnchorLink;
     static defaultProps: {
-        prefixCls: string;
         affix: boolean;
         showInkInFixed: boolean;
-        getContainer: () => Window;
+        getContainer: typeof getDefaultContainer;
     };
     static childContextTypes: {
-        antAnchor: any;
+        antAnchor: PropTypes.Requireable<object>;
+    };
+    state: {
+        activeLink: null;
     };
     private inkNode;
+    private scrollContainer;
     private links;
     private scrollEvent;
     private animating;
-    constructor(props: AnchorProps);
+    private prefixCls?;
     getChildContext(): {
-        antAnchor: {
-            registerLink: (link: String) => void;
-            unregisterLink: (link: String) => void;
-            activeLink: any;
-            scrollTo: (link: string) => void;
-        };
+        antAnchor: AntAnchor;
     };
     componentDidMount(): void;
     componentWillUnmount(): void;
     componentDidUpdate(): void;
     handleScroll: () => void;
     handleScrollTo: (link: string) => void;
-    getCurrentAnchor(offsetTop?: number, bounds?: number): String;
+    getCurrentAnchor(offsetTop?: number, bounds?: number): string;
     updateInk: () => void;
     saveInkNode: (node: HTMLSpanElement) => void;
+    renderAnchor: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

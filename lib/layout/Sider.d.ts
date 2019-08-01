@@ -1,6 +1,12 @@
-/// <reference types="react" />
+import { Context } from '@ant-design/create-react-context';
 import * as React from 'react';
+export interface SiderContextProps {
+    siderCollapsed?: boolean;
+    collapsedWidth?: string | number;
+}
+export declare const SiderContext: Context<SiderContextProps>;
 export declare type CollapseType = 'clickTrigger' | 'responsive';
+export declare type SiderTheme = 'light' | 'dark';
 export interface SiderProps extends React.HTMLAttributes<HTMLDivElement> {
     prefixCls?: string;
     collapsible?: boolean;
@@ -12,46 +18,14 @@ export interface SiderProps extends React.HTMLAttributes<HTMLDivElement> {
     width?: number | string;
     collapsedWidth?: number | string;
     breakpoint?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+    theme?: SiderTheme;
+    onBreakpoint?: (broken: boolean) => void;
 }
 export interface SiderState {
     collapsed?: boolean;
     below: boolean;
     belowShow?: boolean;
 }
-export interface SiderContext {
-    siderCollapsed: boolean;
-}
-export default class Sider extends React.Component<SiderProps, SiderState> {
-    static __ANT_LAYOUT_SIDER: any;
-    static defaultProps: {
-        prefixCls: string;
-        collapsible: boolean;
-        defaultCollapsed: boolean;
-        reverseArrow: boolean;
-        width: number;
-        collapsedWidth: number;
-        style: {};
-    };
-    static childContextTypes: {
-        siderCollapsed: any;
-        collapsedWidth: any;
-    };
-    static contextTypes: {
-        siderHook: any;
-    };
-    private mql;
-    private uniqueId;
-    constructor(props: SiderProps);
-    getChildContext(): {
-        siderCollapsed: boolean | undefined;
-        collapsedWidth: string | number | undefined;
-    };
-    componentWillReceiveProps(nextProps: SiderProps): void;
-    componentDidMount(): void;
-    componentWillUnmount(): void;
-    responsiveHandler: (mql: MediaQueryList) => void;
-    setCollapsed: (collapsed: boolean, type: CollapseType) => void;
-    toggle: () => void;
-    belowShowChange: () => void;
+export default class Sider extends React.Component {
     render(): JSX.Element;
 }

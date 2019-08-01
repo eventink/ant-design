@@ -1,5 +1,6 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { TooltipPlacement } from '../tooltip';
+import { ConfigConsumerProps } from '../config-provider';
 export interface SliderMarks {
     [key: number]: React.ReactNode | {
         style: React.CSSProperties;
@@ -7,12 +8,13 @@ export interface SliderMarks {
     };
 }
 export declare type SliderValue = number | [number, number];
-export declare type HandleGeneratorFn = (info: {
+interface HandleGeneratorInfo {
     value: number;
     dragging: boolean;
     index: number;
     rest: any[];
-}) => React.ReactElement<any>;
+}
+export declare type HandleGeneratorFn = (tooltipPrefixCls: string, info: HandleGeneratorInfo) => React.ReactNode;
 export interface SliderProps {
     prefixCls?: string;
     tooltipPrefixCls?: string;
@@ -32,6 +34,10 @@ export interface SliderProps {
     tipFormatter?: null | ((value: number) => React.ReactNode);
     className?: string;
     id?: string;
+    style?: React.CSSProperties;
+    tooltipVisible?: boolean;
+    tooltipPlacement?: TooltipPlacement;
+    getTooltipPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
 }
 export interface SliderState {
     visibles: {
@@ -40,16 +46,16 @@ export interface SliderState {
 }
 export default class Slider extends React.Component<SliderProps, SliderState> {
     static defaultProps: {
-        prefixCls: string;
-        tooltipPrefixCls: string;
         tipFormatter(value: number): string;
     };
-    private rcSlider;
+    rcSlider: any;
     constructor(props: SliderProps);
     toggleTooltipVisible: (index: number, visible: boolean) => void;
     handleWithTooltip: HandleGeneratorFn;
     focus(): void;
     blur(): void;
     saveSlider: (node: any) => void;
+    renderSlider: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

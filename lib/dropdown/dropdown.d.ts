@@ -1,29 +1,50 @@
-/// <reference types="react" />
 import * as React from 'react';
 import DropdownButton from './dropdown-button';
+import { ConfigConsumerProps } from '../config-provider';
+declare const Placements: ["topLeft", "topCenter", "topRight", "bottomLeft", "bottomCenter", "bottomRight"];
+declare type Placement = (typeof Placements)[number];
+declare type OverlayFunc = () => React.ReactNode;
+declare type Align = {
+    points?: [string, string];
+    offset?: [number, number];
+    targetOffset?: [number, number];
+    overflow?: {
+        adjustX?: boolean;
+        adjustY?: boolean;
+    };
+    useCssRight?: boolean;
+    useCssBottom?: boolean;
+    useCssTransform?: boolean;
+};
 export interface DropDownProps {
     trigger?: ('click' | 'hover' | 'contextMenu')[];
-    overlay: React.ReactNode;
-    onVisibleChange?: (visible?: boolean) => void;
+    overlay: React.ReactNode | OverlayFunc;
+    onVisibleChange?: (visible: boolean) => void;
     visible?: boolean;
     disabled?: boolean;
-    align?: Object;
-    getPopupContainer?: (triggerNode: Element) => HTMLElement;
+    align?: Align;
+    getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
     prefixCls?: string;
     className?: string;
     transitionName?: string;
-    placement?: 'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight';
+    placement?: Placement;
+    overlayClassName?: string;
+    overlayStyle?: React.CSSProperties;
     forceRender?: boolean;
+    mouseEnterDelay?: number;
+    mouseLeaveDelay?: number;
+    openClassName?: string;
 }
 export default class Dropdown extends React.Component<DropDownProps, any> {
     static Button: typeof DropdownButton;
     static defaultProps: {
-        prefixCls: string;
         mouseEnterDelay: number;
         mouseLeaveDelay: number;
-        placement: string;
+        placement: "bottomRight" | "topLeft" | "topCenter" | "topRight" | "bottomLeft" | "bottomCenter";
     };
     getTransitionName(): string;
-    componentDidMount(): void;
+    renderOverlay: (prefixCls: string) => {} | null | undefined;
+    renderDropDown: ({ getPopupContainer: getContextPopupContainer, getPrefixCls, }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

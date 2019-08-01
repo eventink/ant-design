@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import * as React from 'react';
 export interface CardMetaProps {
     prefixCls?: string;
@@ -8,5 +7,5 @@ export interface CardMetaProps {
     title?: React.ReactNode;
     description?: React.ReactNode;
 }
-declare const _default: (props: CardMetaProps) => JSX.Element;
-export default _default;
+declare const Meta: React.SFC<CardMetaProps>;
+export default Meta;

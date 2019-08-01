@@ -1,6 +1,8 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { SpinProps } from '../spin';
+import { ConfigConsumerProps } from '../config-provider';
+import { PaginationConfig } from '../pagination';
 import Item from './Item';
 export { ListItemProps, ListItemMetaProps } from './Item';
 export declare type ColumnCount = 1 | 2 | 3 | 4 | 6 | 8 | 12 | 24;
@@ -16,49 +18,65 @@ export interface ListGridType {
     xxl?: ColumnCount;
 }
 export declare type ListSize = 'small' | 'default' | 'large';
-export interface ListProps {
+export declare type ListItemLayout = 'horizontal' | 'vertical';
+export interface ListProps<T> {
     bordered?: boolean;
     className?: string;
+    style?: React.CSSProperties;
     children?: React.ReactNode;
-    dataSource: any;
+    dataSource?: T[];
     extra?: React.ReactNode;
     grid?: ListGridType;
     id?: string;
-    itemLayout?: string;
+    itemLayout?: ListItemLayout;
     loading?: boolean | SpinProps;
     loadMore?: React.ReactNode;
-    pagination?: any;
+    pagination?: PaginationConfig | false;
     prefixCls?: string;
-    rowKey?: any;
-    renderItem: any;
+    rowKey?: ((item: T) => string) | string;
+    renderItem?: (item: T, index: number) => React.ReactNode;
     size?: ListSize;
     split?: boolean;
     header?: React.ReactNode;
     footer?: React.ReactNode;
-    locale?: Object;
+    locale?: ListLocale;
 }
 export interface ListLocale {
-    emptyText: string;
+    emptyText: React.ReactNode | (() => React.ReactNode);
 }
-export default class List extends React.Component<ListProps> {
+interface ListState {
+    paginationCurrent: number;
+    paginationSize: number;
+}
+export default class List<T> extends React.Component<ListProps<T>, ListState> {
     static Item: typeof Item;
     static childContextTypes: {
-        grid: any;
+        grid: PropTypes.Requireable<any>;
+        itemLayout: PropTypes.Requireable<string>;
     };
     static defaultProps: {
         dataSource: never[];
-        prefixCls: string;
         bordered: boolean;
         split: boolean;
         loading: boolean;
-        pagination: boolean;
+        pagination: false | PaginationConfig | undefined;
+    };
+    defaultPaginationProps: {
+        current: number;
+        total: number;
     };
     private keys;
+    private onPaginationChange;
+    private onPaginationShowSizeChange;
+    constructor(props: ListProps<T>);
     getChildContext(): {
         grid: ListGridType | undefined;
+        itemLayout: "horizontal" | "vertical" | undefined;
     };
-    renderItem: (item: React.ReactElement<any>, index: number) => any;
+    triggerPaginationEvent(eventName: string): (page: number, pageSize: number) => void;
+    renderItem: (item: any, index: number) => {} | null | undefined;
     isSomethingAfterLastItem(): boolean;
-    renderEmpty: (contextLocale: ListLocale) => JSX.Element;
+    renderEmpty: (prefixCls: string, renderEmpty: (componentName?: string | undefined) => React.ReactNode) => JSX.Element;
+    renderList: ({ getPrefixCls, renderEmpty }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }

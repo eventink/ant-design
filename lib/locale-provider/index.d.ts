@@ -1,5 +1,5 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { ModalLocale } from '../modal/locale';
 export interface Locale {
     locale: string;
@@ -16,17 +16,17 @@ export interface Locale {
 }
 export interface LocaleProviderProps {
     locale: Locale;
-    children?: React.ReactElement<any>;
+    children?: React.ReactNode;
 }
 export default class LocaleProvider extends React.Component<LocaleProviderProps, any> {
     static propTypes: {
-        locale: any;
+        locale: PropTypes.Requireable<object>;
     };
     static defaultProps: {
         locale: {};
     };
     static childContextTypes: {
-        antLocale: any;
+        antLocale: PropTypes.Requireable<object>;
     };
     constructor(props: LocaleProviderProps);
     getChildContext(): {
@@ -45,8 +45,7 @@ export default class LocaleProvider extends React.Component<LocaleProviderProps,
             Upload?: Object | undefined;
         };
     };
-    componentWillReceiveProps(nextProps: LocaleProviderProps): void;
-    componentDidUpdate(): void;
+    componentDidUpdate(prevProps: LocaleProviderProps): void;
     componentWillUnmount(): void;
-    render(): React.ReactElement<any>;
+    render(): string | number | boolean | {} | React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)> | React.ReactPortal | null | undefined;
 }

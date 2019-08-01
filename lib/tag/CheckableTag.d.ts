@@ -1,5 +1,5 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { ConfigConsumerProps } from '../config-provider';
 export interface CheckableTagProps {
     prefixCls?: string;
     className?: string;
@@ -8,5 +8,6 @@ export interface CheckableTagProps {
 }
 export default class CheckableTag extends React.Component<CheckableTagProps> {
     handleClick: () => void;
+    renderCheckableTag: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }

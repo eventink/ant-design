@@ -1,7 +1,9 @@
-/// <reference types="react" />
 import * as React from 'react';
-export declare type SpinSize = 'small' | 'default' | 'large';
-export declare type SpinIndicator = React.ReactElement<any>;
+import * as PropTypes from 'prop-types';
+import { ConfigConsumerProps } from '../config-provider';
+declare const SpinSizes: ["small", "default", "large"];
+export declare type SpinSize = (typeof SpinSizes)[number];
+export declare type SpinIndicator = React.ReactElement<HTMLElement>;
 export interface SpinProps {
     prefixCls?: string;
     className?: string;
@@ -17,28 +19,31 @@ export interface SpinState {
     spinning?: boolean;
     notCssAnimationSupported?: boolean;
 }
-export default class Spin extends React.Component<SpinProps, SpinState> {
+declare class Spin extends React.Component<SpinProps, SpinState> {
     static defaultProps: {
-        prefixCls: string;
         spinning: boolean;
-        size: "default" | "small" | "large";
+        size: "small" | "default" | "large";
         wrapperClassName: string;
     };
     static propTypes: {
-        prefixCls: any;
-        className: any;
-        spinning: any;
-        size: any;
-        wrapperClassName: any;
-        indicator: any;
+        prefixCls: PropTypes.Requireable<string>;
+        className: PropTypes.Requireable<string>;
+        spinning: PropTypes.Requireable<boolean>;
+        size: PropTypes.Requireable<"small" | "default" | "large">;
+        wrapperClassName: PropTypes.Requireable<string>;
+        indicator: PropTypes.Requireable<PropTypes.ReactElementLike>;
     };
-    debounceTimeout: number;
-    delayTimeout: number;
+    static setDefaultIndicator(indicator: React.ReactNode): void;
+    originalUpdateSpinning: () => void;
     constructor(props: SpinProps);
     isNestedPattern(): boolean;
-    componentDidMount(): void;
     componentWillUnmount(): void;
-    componentWillReceiveProps(nextProps: SpinProps): void;
-    renderIndicator(): React.ReactElement<any>;
+    cancelExistingSpin(): void;
+    componentDidMount(): void;
+    componentDidUpdate(): void;
+    debouncifyUpdateSpinning: (props?: SpinProps | undefined) => void;
+    updateSpinning: () => void;
+    renderSpin: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default Spin;

@@ -1,5 +1,5 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { ConfigConsumerProps } from '../config-provider';
 export interface AlertProps {
     /**
      * Type of Alert styles, options:`success`, `info`, `warning`, `error`
@@ -24,10 +24,16 @@ export interface AlertProps {
     prefixCls?: string;
     className?: string;
     banner?: boolean;
+    icon?: React.ReactNode;
 }
-export default class Alert extends React.Component<AlertProps, any> {
-    constructor(props: AlertProps);
-    handleClose: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+export interface AlertState {
+    closing: boolean;
+    closed: boolean;
+}
+export default class Alert extends React.Component<AlertProps, AlertState> {
+    state: AlertState;
+    handleClose: (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => void;
     animationEnd: () => void;
-    render(): JSX.Element | null;
+    renderAlert: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element | null;
+    render(): JSX.Element;
 }

@@ -1,10 +1,13 @@
-/// <reference types="react" />
 import * as React from 'react';
-export declare type CheckboxValueType = string | number;
+import * as PropTypes from 'prop-types';
+import { CheckboxChangeEvent } from './Checkbox';
+import { ConfigConsumerProps } from '../config-provider';
+export declare type CheckboxValueType = string | number | boolean;
 export interface CheckboxOptionType {
-    label: string;
+    label: React.ReactNode;
     value: CheckboxValueType;
     disabled?: boolean;
+    onChange?: (e: CheckboxChangeEvent) => void;
 }
 export interface AbstractCheckboxGroupProps {
     prefixCls?: string;
@@ -14,12 +17,14 @@ export interface AbstractCheckboxGroupProps {
     style?: React.CSSProperties;
 }
 export interface CheckboxGroupProps extends AbstractCheckboxGroupProps {
+    name?: string;
     defaultValue?: Array<CheckboxValueType>;
     value?: Array<CheckboxValueType>;
     onChange?: (checkedValue: Array<CheckboxValueType>) => void;
 }
 export interface CheckboxGroupState {
-    value: any;
+    value: CheckboxValueType[];
+    registeredValues: CheckboxValueType[];
 }
 export interface CheckboxGroupContext {
     checkboxGroup: {
@@ -28,31 +33,39 @@ export interface CheckboxGroupContext {
         disabled: boolean;
     };
 }
-export default class CheckboxGroup extends React.Component<CheckboxGroupProps, CheckboxGroupState> {
+declare class CheckboxGroup extends React.Component<CheckboxGroupProps, CheckboxGroupState> {
     static defaultProps: {
         options: never[];
-        prefixCls: string;
     };
     static propTypes: {
-        defaultValue: any;
-        value: any;
-        options: any;
-        onChange: any;
+        defaultValue: PropTypes.Requireable<any[]>;
+        value: PropTypes.Requireable<any[]>;
+        options: PropTypes.Validator<any[]>;
+        onChange: PropTypes.Requireable<(...args: any[]) => any>;
     };
     static childContextTypes: {
-        checkboxGroup: any;
+        checkboxGroup: PropTypes.Requireable<any>;
     };
+    static getDerivedStateFromProps(nextProps: CheckboxGroupProps): {
+        value: (string | number | boolean)[];
+    } | null;
     constructor(props: CheckboxGroupProps);
     getChildContext(): {
         checkboxGroup: {
             toggleOption: (option: CheckboxOptionType) => void;
-            value: any;
+            value: (string | number | boolean)[];
             disabled: boolean | undefined;
+            name: string | undefined;
+            registerValue: (value: string) => void;
+            cancelValue: (value: string) => void;
         };
     };
-    componentWillReceiveProps(nextProps: CheckboxGroupProps): void;
     shouldComponentUpdate(nextProps: CheckboxGroupProps, nextState: CheckboxGroupState): boolean;
+    registerValue: (value: string) => void;
+    cancelValue: (value: string) => void;
     getOptions(): CheckboxOptionType[];
     toggleOption: (option: CheckboxOptionType) => void;
+    renderGroup: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default CheckboxGroup;

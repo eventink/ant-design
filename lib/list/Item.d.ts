@@ -1,13 +1,14 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { ListGridType } from './index';
-export interface ListItemProps {
+import { ConfigConsumerProps } from '../config-provider';
+export interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
     children?: React.ReactNode;
     prefixCls?: string;
     style?: React.CSSProperties;
     extra?: React.ReactNode;
-    actions?: Array<React.ReactNode>;
+    actions?: React.ReactNode[];
     grid?: ListGridType;
 }
 export interface ListItemMetaProps {
@@ -22,17 +23,13 @@ export interface ListItemMetaProps {
 export declare const Meta: (props: ListItemMetaProps) => JSX.Element;
 export default class Item extends React.Component<ListItemProps, any> {
     static Meta: typeof Meta;
-    static propTypes: {
-        column: any;
-        xs: any;
-        sm: any;
-        md: any;
-        lg: any;
-        xl: any;
-        xxl: any;
-    };
     static contextTypes: {
-        grid: any;
+        grid: PropTypes.Requireable<any>;
+        itemLayout: PropTypes.Requireable<string>;
     };
+    context: any;
+    isItemContainsTextNode(): undefined;
+    isFlexMode(): boolean;
+    renderItem: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }

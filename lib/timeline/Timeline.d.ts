@@ -1,6 +1,6 @@
-/// <reference types="react" />
 import * as React from 'react';
 import { TimeLineItemProps } from './TimelineItem';
+import { ConfigConsumerProps } from '../config-provider';
 export interface TimelineProps {
     prefixCls?: string;
     className?: string;
@@ -8,11 +8,15 @@ export interface TimelineProps {
     pending?: React.ReactNode;
     pendingDot?: React.ReactNode;
     style?: React.CSSProperties;
+    reverse?: boolean;
+    mode?: 'left' | 'alternate' | 'right';
 }
 export default class Timeline extends React.Component<TimelineProps, any> {
-    static Item: React.ClassicComponentClass<TimeLineItemProps>;
+    static Item: React.SFC<TimeLineItemProps>;
     static defaultProps: {
-        prefixCls: string;
+        reverse: boolean;
+        mode: string;
     };
+    renderTimeline: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
