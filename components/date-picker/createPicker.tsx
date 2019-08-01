@@ -21,8 +21,8 @@ export interface PickerProps {
 
 export interface PickerState {
   open: boolean;
-  value: moment.Moment | null;
-  showDate: moment.Moment | null;
+  value: moment.Moment | moment.Moment[] | null;
+  showDate: moment.Moment | moment.Moment[] | null;
 }
 
 export default function createPicker(TheCalendar: React.ComponentClass): any {
@@ -85,10 +85,10 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       if (value && !interopDefault(moment).isMoment(value)) {
         throw new Error(
           'The value/defaultValue of DatePicker or MonthPicker must be ' +
-          'a moment object or an array of moment objects after `antd@2.0`, see: https://u.ant.design/date-picker-value',
+            'a moment object or an array of moment objects after `antd@2.0`, see: https://u.ant.design/date-picker-value',
         );
       }
-    }
+    };
 
     renderFooter = (...args: any[]) => {
       const { renderExtraFooter } = this.props;
@@ -115,7 +115,9 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       if (props.multiple) {
         let formattedValue;
         if (value && value.length) {
-          formattedValue = value.map((singleValue: moment.Moment) => formatDate(singleValue, props.format)).join(', ');
+          formattedValue = value
+            .map((singleValue: moment.Moment) => formatDate(singleValue, props.format))
+            .join(', ');
         }
         props.onChange(value, formattedValue);
       } else {
@@ -123,7 +125,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       }
     };
 
-    handleCalendarChange = (value: moment.Moment | moment.Moment[]) => {
+    handleCalendarChange = (value: moment.Moment | moment.Moment[] | null) => {
       this.setState({ showDate: value });
     };
 
@@ -153,7 +155,15 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
     renderPicker = ({ getPrefixCls }: ConfigConsumerProps) => {
       const { value, showDate, open } = this.state;
       const props = omit(this.props, ['onChange']);
-      const { prefixCls: customizePrefixCls, locale, localeCode, suffixIcon, multiple, selectWeekDays, selectMonths } = props;
+      const {
+        prefixCls: customizePrefixCls,
+        locale,
+        localeCode,
+        suffixIcon,
+        multiple,
+        selectWeekDays,
+        selectMonths,
+      } = props;
 
       const prefixCls = getPrefixCls('calendar', customizePrefixCls);
       // To support old version react.
@@ -171,11 +181,11 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       });
 
       if (value && localeCode) {
-        if (multiple) {
+        if (multiple && 'length' in value) {
           if (value.length) {
             value.forEach((singleValue: moment.Moment) => singleValue.locale(singleValue));
           }
-        } else {
+        } else if ('locale' in value) {
           value.locale(localeCode);
         }
       }
@@ -210,7 +220,10 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           disabledTime={disabledTime}
           locale={locale.lang}
           timePicker={props.timePicker}
-          defaultValue={props.defaultPickerValue || (multiple ? [interopDefault(moment)()] : interopDefault(moment)())}
+          defaultValue={
+            props.defaultPickerValue ||
+            (multiple ? [interopDefault(moment)()] : interopDefault(moment)())
+          }
           dateInputPlaceholder={placeholder}
           prefixCls={prefixCls}
           className={calendarClassName}
@@ -232,9 +245,7 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
       const clearIcon =
         !props.disabled && props.allowClear && value ? (
           props.clearIcon ? (
-            <span onClick={this.clearSelection}>
-              {props.clearIcon}
-            </span>
+            <span onClick={this.clearSelection}>{props.clearIcon}</span>
           ) : (
             <Icon
               type="close-circle"
@@ -263,9 +274,11 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
         if (props.formatInput) {
           inputValue = props.formatInput(value);
         } else {
-          if (multiple) {
-            inputValue = value.map((singleValue: moment.Moment) => formatDate(singleValue, props.format)).join(', ');
-          } else {
+          if (multiple && 'map' in value) {
+            inputValue = value
+              .map((singleValue: moment.Moment) => formatDate(singleValue, props.format))
+              .join(', ');
+          } else if (!Array.isArray(value)) {
             inputValue = formatDate(value, props.format);
           }
         }
