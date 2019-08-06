@@ -266,7 +266,8 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           })
         ) : (
           <span className={`${prefixCls}-picker-icon`}>{suffixIcon}</span>
-        ))) || <Icon type="calendar" className={`${prefixCls}-picker-icon`} />;
+        ))) ||
+        props.pickerIcon || <Icon type="calendar" className={`${prefixCls}-picker-icon`} />;
 
       let inputValue = '';
 
@@ -301,7 +302,6 @@ export default function createPicker(TheCalendar: React.ComponentClass): any {
           />
           {clearIcon}
           {inputIcon}
-          {props.pickerIcon || <span className={`${prefixCls}-picker-icon`} />}
         </div>
       );
 
