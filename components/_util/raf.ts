@@ -1,4 +1,4 @@
-import raf from 'raf';
+const raf = require('raf/index.js');
 
 interface RafMap {
   [id: number]: number;
