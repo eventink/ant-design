@@ -932,7 +932,6 @@
   padding: 4px 11px;
   color: rgba(0, 0, 0, 0.65);
   font-size: 14px;
-  line-height: 32px;
   line-height: 1.5 \9;
   background-color: #fff;
   background-image: none;
@@ -1017,14 +1016,12 @@ textarea.ant-calendar-range .ant-calendar-time-picker-input {
   height: 40px;
   padding: 6px 11px;
   font-size: 16px;
-  line-height: 40px;
   line-height: 1.5 \9;
 }
 .ant-calendar-range .ant-calendar-input-sm,
 .ant-calendar-range .ant-calendar-time-picker-input-sm {
   height: 24px;
   padding: 1px 7px;
-  line-height: 24px;
   line-height: 1.5 \9;
 }
 .ant-calendar-range .ant-calendar-input:focus,

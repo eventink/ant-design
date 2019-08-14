@@ -9,14 +9,14 @@
   height: @input-height-lg;
   padding: @input-padding-vertical-lg @input-padding-horizontal-lg;
   font-size: @font-size-lg;
-  line-height: @input-height-lg;
+  // line-height: @input-height-lg; // it breaks IE 11
   line-height: ~'@{line-height-base} \9'; // https://github.com/ant-design/ant-design/issues/17753
 }
 
 .input-sm() {
   height: @input-height-sm;
   padding: @input-padding-vertical-sm @input-padding-horizontal-sm;
-  line-height: @input-height-sm;
+  // line-height: @input-height-sm; // it breaks IE 11
   line-height: ~'@{line-height-base} \9'; // https://github.com/ant-design/ant-design/issues/17753
 }
 
@@ -54,7 +54,7 @@
   padding: @input-padding-vertical-base @input-padding-horizontal-base;
   color: @input-color;
   font-size: @font-size-base;
-  line-height: @input-height-base;
+  // line-height: @input-height-base; // it breaks IE11
   line-height: ~'@{line-height-base} \9'; // https://github.com/ant-design/ant-design/issues/17753
   background-color: @input-bg;
   background-image: none;
