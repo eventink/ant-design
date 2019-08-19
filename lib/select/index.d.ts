@@ -1,57 +1,78 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import { ConfigConsumerProps, RenderEmptyHandler } from '../config-provider';
+declare const SelectSizes: ["default", "large", "small"];
 export interface AbstractSelectProps {
     prefixCls?: string;
     className?: string;
-    size?: 'default' | 'large' | 'small';
+    showAction?: string | string[];
+    size?: (typeof SelectSizes)[number];
     notFoundContent?: React.ReactNode | null;
     transitionName?: string;
     choiceTransitionName?: string;
     showSearch?: boolean;
     allowClear?: boolean;
     disabled?: boolean;
+    showArrow?: boolean;
     style?: React.CSSProperties;
     tabIndex?: number;
-    placeholder?: string;
+    placeholder?: string | React.ReactNode;
     defaultActiveFirstOption?: boolean;
     dropdownClassName?: string;
     dropdownStyle?: React.CSSProperties;
     dropdownMenuStyle?: React.CSSProperties;
-    onSearch?: (value: string) => any;
-    filterOption?: boolean | ((inputValue: string, option: React.ReactElement<OptionProps>) => any);
+    dropdownMatchSelectWidth?: boolean;
+    onSearch?: (value: string) => void;
+    getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+    filterOption?: boolean | ((inputValue: string, option: React.ReactElement<OptionProps>) => boolean);
+    id?: string;
+    defaultOpen?: boolean;
+    open?: boolean;
+    onDropdownVisibleChange?: (open: boolean) => void;
+    autoClearSearchValue?: boolean;
+    dropdownRender?: (menu?: React.ReactNode, props?: SelectProps) => React.ReactNode;
+    loading?: boolean;
 }
 export interface LabeledValue {
     key: string;
     label: React.ReactNode;
 }
-export declare type SelectValue = string | any[] | LabeledValue | LabeledValue[];
-export interface SelectProps extends AbstractSelectProps {
-    value?: SelectValue;
-    defaultValue?: SelectValue;
-    mode?: 'default' | 'multiple' | 'tags' | 'combobox';
+export declare type SelectValue = string | string[] | number | number[] | LabeledValue | LabeledValue[];
+export interface SelectProps<T = SelectValue> extends AbstractSelectProps {
+    value?: T;
+    defaultValue?: T;
+    mode?: 'default' | 'multiple' | 'tags' | 'combobox' | string;
     optionLabelProp?: string;
-    onChange?: (value: SelectValue, option: React.ReactElement<any> | React.ReactElement<any>[]) => void;
-    onSelect?: (value: SelectValue, option: React.ReactElement<any>) => any;
-    onDeselect?: (value: SelectValue) => any;
-    onBlur?: () => any;
-    onFocus?: () => any;
-    onPopupScroll?: () => any;
+    firstActiveValue?: string | string[];
+    onChange?: (value: T, option: React.ReactElement<any> | React.ReactElement<any>[]) => void;
+    onSelect?: (value: T extends (infer I)[] ? I : T, option: React.ReactElement<any>) => void;
+    onDeselect?: (value: T extends (infer I)[] ? I : T) => void;
+    onBlur?: (value: T) => void;
+    onFocus?: () => void;
+    onPopupScroll?: React.UIEventHandler<HTMLDivElement>;
     onInputKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    onMouseEnter?: (e: React.MouseEvent<HTMLInputElement>) => void;
+    onMouseLeave?: (e: React.MouseEvent<HTMLInputElement>) => void;
     maxTagCount?: number;
-    maxTagPlaceholder?: React.ReactNode | ((omittedValues: SelectValue[]) => React.ReactNode);
-    dropdownMatchSelectWidth?: boolean;
+    maxTagTextLength?: number;
+    maxTagPlaceholder?: React.ReactNode | ((omittedValues: T[]) => React.ReactNode);
     optionFilterProp?: string;
     labelInValue?: boolean;
-    getPopupContainer?: (triggerNode: Element) => HTMLElement;
     tokenSeparators?: string[];
     getInputElement?: () => React.ReactElement<any>;
     autoFocus?: boolean;
+    suffixIcon?: React.ReactNode;
+    removeIcon?: React.ReactNode;
+    clearIcon?: React.ReactNode;
+    menuItemSelectedIcon?: React.ReactNode;
 }
 export interface OptionProps {
     disabled?: boolean;
-    value?: any;
+    value?: string | number;
     title?: string;
     children?: React.ReactNode;
+    className?: string;
+    style?: React.CSSProperties;
 }
 export interface OptGroupProps {
     label?: React.ReactNode;
@@ -59,31 +80,35 @@ export interface OptGroupProps {
 export interface SelectLocale {
     notFoundContent?: string;
 }
-export default class Select extends React.Component<SelectProps, {}> {
+export default class Select<T = SelectValue> extends React.Component<SelectProps<T>, {}> {
     static Option: React.ClassicComponentClass<OptionProps>;
     static OptGroup: React.ClassicComponentClass<OptGroupProps>;
+    static SECRET_COMBOBOX_MODE_DO_NOT_USE: string;
     static defaultProps: {
-        prefixCls: string;
         showSearch: boolean;
         transitionName: string;
         choiceTransitionName: string;
     };
     static propTypes: {
-        prefixCls: any;
-        className: any;
-        size: any;
-        combobox: any;
-        notFoundContent: any;
-        showSearch: any;
-        optionLabelProp: any;
-        transitionName: any;
-        choiceTransitionName: any;
+        prefixCls: PropTypes.Requireable<string>;
+        className: PropTypes.Requireable<string>;
+        size: PropTypes.Requireable<"small" | "default" | "large">;
+        notFoundContent: PropTypes.Requireable<any>;
+        showSearch: PropTypes.Requireable<boolean>;
+        optionLabelProp: PropTypes.Requireable<string>;
+        transitionName: PropTypes.Requireable<string>;
+        choiceTransitionName: PropTypes.Requireable<string>;
+        id: PropTypes.Requireable<string>;
     };
     private rcSelect;
+    constructor(props: SelectProps<T>);
     focus(): void;
     blur(): void;
     saveSelect: (node: any) => void;
-    getNotFoundContent(locale: SelectLocale): {} | null | undefined;
-    renderSelect: (locale: SelectLocale) => JSX.Element;
+    getNotFoundContent(renderEmpty: RenderEmptyHandler): {} | null | undefined;
+    isCombobox(): boolean;
+    renderSuffixIcon(prefixCls: string): {};
+    renderSelect: ({ getPopupContainer: getContextPopupContainer, getPrefixCls, renderEmpty, }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

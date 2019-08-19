@@ -1,5 +1,5 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { ConfigConsumerProps } from '../config-provider';
 import { RangePickerValue, RangePickerPresetRange } from './interface';
 export interface RangePickerState {
     value?: RangePickerValue;
@@ -7,16 +7,34 @@ export interface RangePickerState {
     open?: boolean;
     hoverValue?: RangePickerValue;
 }
-export default class RangePicker extends React.Component<any, RangePickerState> {
+declare class RangePicker extends React.Component<any, RangePickerState> {
     static defaultProps: {
-        prefixCls: string;
         allowClear: boolean;
         showToday: boolean;
+        separator: string;
     };
+    static getDerivedStateFromProps(nextProps: any, prevState: any): {
+        value: any;
+    } | {
+        showDate: any;
+        value: any;
+    } | {
+        open: any;
+        value?: undefined;
+    } | {
+        open: any;
+        value: any;
+    } | {
+        open: any;
+        showDate: any;
+        value: any;
+    } | null;
     private picker;
+    private prefixCls?;
+    private tagPrefixCls?;
     constructor(props: any);
-    componentWillReceiveProps(nextProps: any): void;
-    clearSelection: (e: React.MouseEvent<HTMLElement>) => void;
+    componentDidUpdate(_: any, prevState: RangePickerState): void;
+    clearSelection: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     clearHoverValue: () => void;
     handleChange: (value: RangePickerValue) => void;
     handleOpenChange: (open: boolean) => void;
@@ -29,6 +47,8 @@ export default class RangePicker extends React.Component<any, RangePickerState> 
     focus(): void;
     blur(): void;
     savePicker: (node: HTMLSpanElement) => void;
-    renderFooter: (...args: any[]) => (JSX.Element | null)[] | null;
+    renderFooter: () => (JSX.Element | null)[] | null;
+    renderRangePicker: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default RangePicker;

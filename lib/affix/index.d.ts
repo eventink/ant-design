@@ -1,5 +1,6 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { ConfigConsumerProps } from '../config-provider';
+declare function getDefaultTarget(): Window | null;
 export interface AffixProps {
     /**
      * 距离窗口顶部达到指定偏移量后触发
@@ -14,37 +15,39 @@ export interface AffixProps {
     /** 设置 Affix 需要监听其滚动事件的元素，值为一个返回对应 DOM 元素的函数 */
     target?: () => Window | HTMLElement | null;
     prefixCls?: string;
+    className?: string;
+}
+declare enum AffixStatus {
+    None = 0,
+    Prepare = 1
 }
 export interface AffixState {
-    affixStyle: React.CSSProperties | undefined;
-    placeholderStyle: React.CSSProperties | undefined;
+    affixStyle?: React.CSSProperties;
+    placeholderStyle?: React.CSSProperties;
+    status: AffixStatus;
+    lastAffix: boolean;
+    prevTarget: Window | HTMLElement | null;
 }
-export default class Affix extends React.Component<AffixProps, AffixState> {
-    static propTypes: {
-        offsetTop: any;
-        offsetBottom: any;
-        target: any;
-    };
-    scrollEvent: any;
-    resizeEvent: any;
-    timeout: any;
-    events: string[];
-    eventHandlers: {
-        [key: string]: any;
+declare class Affix extends React.Component<AffixProps, AffixState> {
+    static defaultProps: {
+        target: typeof getDefaultTarget;
     };
     state: AffixState;
-    private fixedNode;
-    private placeholderNode;
-    setAffixStyle(e: any, affixStyle: React.CSSProperties | null): void;
-    setPlaceholderStyle(placeholderStyle: React.CSSProperties | null): void;
-    syncPlaceholderStyle(e: any): void;
-    updatePosition(e: any): void;
+    placeholderNode: HTMLDivElement;
+    fixedNode: HTMLDivElement;
+    private timeout;
     componentDidMount(): void;
-    componentWillReceiveProps(nextProps: AffixProps): void;
+    componentDidUpdate(prevProps: AffixProps): void;
     componentWillUnmount(): void;
-    setTargetEventListeners(getTarget: () => HTMLElement | Window | null): void;
-    clearEventListeners(): void;
-    saveFixedNode: (node: HTMLDivElement) => void;
+    getOffsetTop: () => number | undefined;
+    getOffsetBottom: () => number | undefined;
     savePlaceholderNode: (node: HTMLDivElement) => void;
+    saveFixedNode: (node: HTMLDivElement) => void;
+    updatePosition(event?: Event | null): void;
+    lazyUpdatePosition(event: Event): void;
+    prepareMeasure: (event?: Event | null | undefined) => void;
+    measure: () => void;
+    renderAffix: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default Affix;

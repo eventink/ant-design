@@ -1,15 +1,16 @@
-/// <reference types="react" />
 import * as React from 'react';
 import * as moment from 'moment';
 import { TimePickerProps } from '../time-picker';
 export interface PickerProps {
     id?: number | string;
+    name?: string;
     prefixCls?: string;
     inputPrefixCls?: string;
-    format?: string;
+    format?: string | string[];
     disabled?: boolean;
     allowClear?: boolean;
     className?: string;
+    suffixIcon?: React.ReactNode;
     style?: React.CSSProperties;
     popupStyle?: React.CSSProperties;
     dropdownClassName?: string;
@@ -18,33 +19,35 @@ export interface PickerProps {
     getCalendarContainer?: (triggerNode: Element) => HTMLElement;
     open?: boolean;
     onOpenChange?: (status: boolean) => void;
-    disabledDate?: (current: moment.Moment) => boolean;
-    renderExtraFooter?: () => React.ReactNode;
+    disabledDate?: (current: moment.Moment | undefined) => boolean;
     dateRender?: (current: moment.Moment, today: moment.Moment) => React.ReactNode;
+    autoFocus?: boolean;
 }
 export interface SinglePickerProps {
     value?: moment.Moment;
     defaultValue?: moment.Moment;
     defaultPickerValue?: moment.Moment;
-    onChange?: (date: moment.Moment, dateString: string) => void;
+    placeholder?: string;
+    renderExtraFooter?: (mode: DatePickerMode) => React.ReactNode;
+    onChange?: (date: moment.Moment | null, dateString: string) => void;
 }
+declare const DatePickerModes: ["time", "date", "month", "year", "decade"];
+export declare type DatePickerMode = (typeof DatePickerModes)[number];
 export interface DatePickerProps extends PickerProps, SinglePickerProps {
-    className?: string;
     showTime?: TimePickerProps | boolean;
     showToday?: boolean;
     open?: boolean;
-    disabledTime?: (current: moment.Moment) => {
+    disabledTime?: (current: moment.Moment | undefined) => {
         disabledHours?: () => number[];
         disabledMinutes?: () => number[];
         disabledSeconds?: () => number[];
     };
     onOpenChange?: (status: boolean) => void;
+    onPanelChange?: (value: moment.Moment | undefined, mode: DatePickerMode) => void;
     onOk?: (selectedTime: moment.Moment) => void;
-    placeholder?: string;
+    mode?: DatePickerMode;
 }
 export interface MonthPickerProps extends PickerProps, SinglePickerProps {
-    className?: string;
-    placeholder?: string;
 }
 export declare type RangePickerValue = undefined[] | [moment.Moment] | [undefined, moment.Moment] | [moment.Moment, moment.Moment];
 export declare type RangePickerPresetRange = RangePickerValue | (() => RangePickerValue);
@@ -55,26 +58,28 @@ export interface RangePickerProps extends PickerProps {
     defaultPickerValue?: RangePickerValue;
     onChange?: (dates: RangePickerValue, dateStrings: [string, string]) => void;
     onCalendarChange?: (dates: RangePickerValue, dateStrings: [string, string]) => void;
-    onOk?: (selectedTime: moment.Moment) => void;
+    onOk?: (selectedTime: RangePickerPresetRange) => void;
     showTime?: TimePickerProps | boolean;
+    showToday?: boolean;
     ranges?: {
         [range: string]: RangePickerPresetRange;
     };
     placeholder?: [string, string];
     mode?: string | string[];
-    disabledTime?: (current: moment.Moment, type: string) => {
+    separator?: React.ReactNode;
+    disabledTime?: (current: moment.Moment | undefined, type: string) => {
         disabledHours?: () => number[];
         disabledMinutes?: () => number[];
         disabledSeconds?: () => number[];
     };
     onPanelChange?: (value?: RangePickerValue, mode?: string | string[]) => void;
+    renderExtraFooter?: () => React.ReactNode;
 }
 export interface WeekPickerProps extends PickerProps, SinglePickerProps {
-    className?: string;
-    placeholder?: string;
 }
 export interface DatePickerDecorator extends React.ClassicComponentClass<DatePickerProps> {
     RangePicker: React.ClassicComponentClass<RangePickerProps>;
     MonthPicker: React.ClassicComponentClass<MonthPickerProps>;
     WeekPicker: React.ClassicComponentClass<WeekPickerProps>;
 }
+export {};

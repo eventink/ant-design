@@ -1,68 +1,64 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { ColProps } from '../grid/col';
+import { ConfigConsumerProps } from '../config-provider';
+declare const ValidateStatuses: ["success", "warning", "error", "validating", ""];
+export declare type FormLabelAlign = 'left' | 'right';
 export interface FormItemProps {
     prefixCls?: string;
     className?: string;
     id?: string;
+    htmlFor?: string;
     label?: React.ReactNode;
+    labelAlign?: FormLabelAlign;
     labelCol?: ColProps;
     wrapperCol?: ColProps;
     help?: React.ReactNode;
     extra?: React.ReactNode;
-    validateStatus?: 'success' | 'warning' | 'error' | 'validating';
+    validateStatus?: (typeof ValidateStatuses)[number];
     hasFeedback?: boolean;
     required?: boolean;
     style?: React.CSSProperties;
     colon?: boolean;
 }
-export interface FormItemContext {
-    vertical: boolean;
-}
 export default class FormItem extends React.Component<FormItemProps, any> {
     static defaultProps: {
         hasFeedback: boolean;
-        prefixCls: string;
-        colon: boolean;
     };
     static propTypes: {
-        prefixCls: any;
-        label: any;
-        labelCol: any;
-        help: any;
-        validateStatus: any;
-        hasFeedback: any;
-        wrapperCol: any;
-        className: any;
-        id: any;
-        children: any;
-        colon: any;
+        prefixCls: PropTypes.Requireable<string>;
+        label: PropTypes.Requireable<string | number | boolean | {} | PropTypes.ReactElementLike | PropTypes.ReactNodeArray>;
+        labelAlign: PropTypes.Requireable<string>;
+        labelCol: PropTypes.Requireable<object>;
+        help: PropTypes.Requireable<string | number | boolean | {} | PropTypes.ReactElementLike | PropTypes.ReactNodeArray>;
+        validateStatus: PropTypes.Requireable<"" | "error" | "success" | "warning" | "validating">;
+        hasFeedback: PropTypes.Requireable<boolean>;
+        wrapperCol: PropTypes.Requireable<object>;
+        className: PropTypes.Requireable<string>;
+        id: PropTypes.Requireable<string>;
+        children: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        colon: PropTypes.Requireable<boolean>;
     };
-    static contextTypes: {
-        vertical: any;
-    };
-    context: FormItemContext;
-    state: {
-        helpShow: boolean;
-    };
+    helpShow: boolean;
     componentDidMount(): void;
-    getHelpMsg(): any;
-    getControls(children: React.ReactNode, recursively: boolean): React.ReactElement<any>[];
-    getOnlyControl(): React.ReactElement<any> | null;
+    getHelpMessage(): {} | null | undefined;
+    getControls(children: React.ReactNode, recursively: boolean): React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)>[];
+    getOnlyControl(): React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<any, any, any>)> | null;
     getChildProp(prop: string): any;
     getId(): any;
     getMeta(): any;
     getField(): any;
     onHelpAnimEnd: (_key: string, helpShow: boolean) => void;
-    renderHelp(): JSX.Element;
-    renderExtra(): JSX.Element | null;
+    renderHelp(prefixCls: string): JSX.Element;
+    renderExtra(prefixCls: string): JSX.Element | null;
     getValidateStatus(): "error" | "" | "success" | "validating";
-    renderValidateWrapper(c1: React.ReactNode, c2: React.ReactNode, c3: React.ReactNode): JSX.Element;
-    renderWrapper(children: React.ReactNode): JSX.Element;
+    renderValidateWrapper(prefixCls: string, c1: React.ReactNode, c2: React.ReactNode, c3: React.ReactNode): JSX.Element;
+    renderWrapper(prefixCls: string, children: React.ReactNode): JSX.Element;
     isRequired(): any;
-    onLabelClick: (e: any) => void;
-    renderLabel(): JSX.Element | null;
-    renderChildren(): (JSX.Element | null)[];
-    renderFormItem(children: React.ReactNode): JSX.Element;
+    onLabelClick: () => void;
+    renderLabel(prefixCls: string): JSX.Element;
+    renderChildren(prefixCls: string): JSX.Element[];
+    renderFormItem: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export {};

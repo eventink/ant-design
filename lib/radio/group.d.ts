@@ -1,14 +1,17 @@
-/// <reference types="react" />
 import * as React from 'react';
-import { RadioGroupProps, RadioGroupState, RadioChangeEvent } from './interface';
-export default class RadioGroup extends React.Component<RadioGroupProps, RadioGroupState> {
+import * as PropTypes from 'prop-types';
+import { RadioGroupProps, RadioGroupState, RadioChangeEvent, RadioGroupButtonStyle } from './interface';
+import { ConfigConsumerProps } from '../config-provider';
+declare class RadioGroup extends React.Component<RadioGroupProps, RadioGroupState> {
     static defaultProps: {
-        disabled: boolean;
-        prefixCls: string;
+        buttonStyle: RadioGroupButtonStyle;
     };
     static childContextTypes: {
-        radioGroup: any;
+        radioGroup: PropTypes.Requireable<any>;
     };
+    static getDerivedStateFromProps(nextProps: RadioGroupProps): {
+        value: any;
+    } | null;
     constructor(props: RadioGroupProps);
     getChildContext(): {
         radioGroup: {
@@ -18,8 +21,9 @@ export default class RadioGroup extends React.Component<RadioGroupProps, RadioGr
             name: string | undefined;
         };
     };
-    componentWillReceiveProps(nextProps: RadioGroupProps): void;
     shouldComponentUpdate(nextProps: RadioGroupProps, nextState: RadioGroupState): boolean;
     onRadioChange: (ev: RadioChangeEvent) => void;
+    renderGroup: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default RadioGroup;

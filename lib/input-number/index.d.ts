@@ -1,6 +1,8 @@
-/// <reference types="react" />
 import * as React from 'react';
-export interface InputNumberProps {
+import { ConfigConsumerProps } from '../config-provider';
+import { Omit } from '../_util/type';
+export declare type OmitAttrs = 'defaultValue' | 'onChange' | 'size';
+export interface InputNumberProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, OmitAttrs> {
     prefixCls?: string;
     min?: number;
     max?: number;
@@ -8,12 +10,12 @@ export interface InputNumberProps {
     step?: number | string;
     defaultValue?: number;
     tabIndex?: number;
-    onKeyDown?: React.FormEventHandler<any>;
-    onChange?: (value: number | string | undefined) => void;
+    onChange?: (value: number | undefined) => void;
     disabled?: boolean;
     size?: 'large' | 'small' | 'default';
     formatter?: (value: number | string | undefined) => string;
-    parser?: (displayValue: string | undefined) => number;
+    parser?: (displayValue: string | undefined) => number | string;
+    decimalSeparator?: string;
     placeholder?: string;
     style?: React.CSSProperties;
     className?: string;
@@ -23,11 +25,12 @@ export interface InputNumberProps {
 }
 export default class InputNumber extends React.Component<InputNumberProps, any> {
     static defaultProps: {
-        prefixCls: string;
         step: number;
     };
     private inputNumberRef;
-    render(): JSX.Element;
+    saveInputNumber: (inputNumberRef: any) => void;
     focus(): void;
     blur(): void;
+    renderInputNumber: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
+    render(): JSX.Element;
 }

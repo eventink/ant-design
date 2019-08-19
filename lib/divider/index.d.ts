@@ -1,12 +1,12 @@
-/// <reference types="react" />
 import * as React from 'react';
 export interface DividerProps {
     prefixCls?: string;
     type?: 'horizontal' | 'vertical';
-    orientation?: 'left' | 'right';
+    orientation?: 'left' | 'right' | 'center';
     className?: string;
     children?: React.ReactNode;
     dashed?: boolean;
     style?: React.CSSProperties;
 }
-export default function Divider({prefixCls, type, orientation, className, children, dashed, ...restProps}: DividerProps): JSX.Element;
+declare const Divider: React.SFC<DividerProps>;
+export default Divider;

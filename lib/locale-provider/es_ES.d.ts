@@ -16,13 +16,16 @@ declare const _default: {
             placeholder: string;
         };
     };
+    global: {
+        placeholder: string;
+    };
     Table: {
         filterTitle: string;
         filterConfirm: string;
         filterReset: string;
-        emptyText: string;
         selectAll: string;
         selectInvert: string;
+        sortTitle: string;
     };
     Modal: {
         okText: string;
@@ -34,19 +37,30 @@ declare const _default: {
         cancelText: string;
     };
     Transfer: {
-        notFoundContent: string;
         searchPlaceholder: string;
         itemUnit: string;
         itemsUnit: string;
-    };
-    Select: {
-        notFoundContent: string;
     };
     Upload: {
         uploading: string;
         removeFile: string;
         uploadError: string;
         previewFile: string;
+    };
+    Empty: {
+        description: string;
+    };
+    Icon: {
+        icon: string;
+    };
+    Text: {
+        edit: string;
+        copy: string;
+        copied: string;
+        expand: string;
+    };
+    PageHeader: {
+        back: string;
     };
 };
 export default _default;

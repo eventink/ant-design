@@ -6,6 +6,10 @@ declare const _default: {
         timePickerLocale: {
             placeholder: string;
         };
+        dateFormat: string;
+        monthFormat: string;
+        dateTimeFormat: string;
+        weekFormat: string;
     };
     TimePicker: {
         placeholder: string;
@@ -15,12 +19,15 @@ declare const _default: {
         timePickerLocale: {
             placeholder: string;
         };
+        dateFormat: string;
+        monthFormat: string;
+        dateTimeFormat: string;
+        weekFormat: string;
     };
     Table: {
         filterTitle: string;
         filterConfirm: string;
         filterReset: string;
-        emptyText: string;
         selectAll: string;
         selectInvert: string;
     };
@@ -34,19 +41,18 @@ declare const _default: {
         cancelText: string;
     };
     Transfer: {
-        notFoundContent: string;
         searchPlaceholder: string;
         itemUnit: string;
         itemsUnit: string;
-    };
-    Select: {
-        notFoundContent: string;
     };
     Upload: {
         uploading: string;
         removeFile: string;
         uploadError: string;
         previewFile: string;
+    };
+    Empty: {
+        description: string;
     };
 };
 export default _default;

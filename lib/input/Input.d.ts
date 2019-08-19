@@ -1,78 +1,73 @@
-/// <reference types="react" />
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import Group from './Group';
 import Search from './Search';
 import TextArea from './TextArea';
-export interface AbstractInputProps {
+import { ConfigConsumerProps } from '../config-provider';
+import Password from './Password';
+import { Omit } from '../_util/type';
+declare const InputSizes: ["small", "default", "large"];
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
     prefixCls?: string;
-    className?: string;
-    defaultValue?: any;
-    value?: any;
-    tabIndex?: number;
-    style?: React.CSSProperties;
-}
-export interface InputProps extends AbstractInputProps {
-    placeholder?: string;
-    type?: string;
-    id?: number | string;
-    name?: string;
-    size?: 'large' | 'default' | 'small';
-    maxLength?: number | string;
-    disabled?: boolean;
-    readOnly?: boolean;
+    size?: (typeof InputSizes)[number];
+    onPressEnter?: React.KeyboardEventHandler<HTMLInputElement>;
     addonBefore?: React.ReactNode;
     addonAfter?: React.ReactNode;
-    onPressEnter?: React.FormEventHandler<HTMLInputElement>;
-    onKeyDown?: React.FormEventHandler<HTMLInputElement>;
-    onKeyUp?: React.FormEventHandler<HTMLInputElement>;
-    onChange?: React.ChangeEventHandler<HTMLInputElement>;
-    onClick?: React.FormEventHandler<HTMLInputElement>;
-    onFocus?: React.FormEventHandler<HTMLInputElement>;
-    onBlur?: React.FormEventHandler<HTMLInputElement>;
-    autoComplete?: string;
     prefix?: React.ReactNode;
     suffix?: React.ReactNode;
-    spellCheck?: boolean;
-    autoFocus?: boolean;
+    allowClear?: boolean;
 }
-export default class Input extends React.Component<InputProps, any> {
+declare class Input extends React.Component<InputProps, any> {
     static Group: typeof Group;
     static Search: typeof Search;
     static TextArea: typeof TextArea;
+    static Password: typeof Password;
     static defaultProps: {
-        prefixCls: string;
         type: string;
-        disabled: boolean;
     };
     static propTypes: {
-        type: any;
-        id: any;
-        size: any;
-        maxLength: any;
-        disabled: any;
-        value: any;
-        defaultValue: any;
-        className: any;
-        addonBefore: any;
-        addonAfter: any;
-        prefixCls: any;
-        autosize: any;
-        onPressEnter: any;
-        onKeyDown: any;
-        onKeyUp: any;
-        onFocus: any;
-        onBlur: any;
-        prefix: any;
-        suffix: any;
+        type: PropTypes.Requireable<string>;
+        id: PropTypes.Requireable<string>;
+        size: PropTypes.Requireable<"small" | "default" | "large">;
+        maxLength: PropTypes.Requireable<number>;
+        disabled: PropTypes.Requireable<boolean>;
+        value: PropTypes.Requireable<any>;
+        defaultValue: PropTypes.Requireable<any>;
+        className: PropTypes.Requireable<string>;
+        addonBefore: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        addonAfter: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        prefixCls: PropTypes.Requireable<string>;
+        onPressEnter: PropTypes.Requireable<(...args: any[]) => any>;
+        onKeyDown: PropTypes.Requireable<(...args: any[]) => any>;
+        onKeyUp: PropTypes.Requireable<(...args: any[]) => any>;
+        onFocus: PropTypes.Requireable<(...args: any[]) => any>;
+        onBlur: PropTypes.Requireable<(...args: any[]) => any>;
+        prefix: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        suffix: PropTypes.Requireable<PropTypes.ReactNodeLike>;
+        allowClear: PropTypes.Requireable<boolean>;
     };
+    static getDerivedStateFromProps(nextProps: InputProps): {
+        value: string | number | string[] | undefined;
+    } | null;
     input: HTMLInputElement;
+    constructor(props: InputProps);
+    getSnapshotBeforeUpdate(prevProps: InputProps): null;
+    componentDidUpdate(): void;
     handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     focus(): void;
     blur(): void;
-    getInputClassName(): any;
+    select(): void;
+    getInputClassName(prefixCls: string): string;
     saveInput: (node: HTMLInputElement) => void;
-    renderLabeledInput(children: React.ReactElement<any>): React.ReactElement<any>;
-    renderLabeledIcon(children: React.ReactElement<any>): React.ReactElement<any>;
-    renderInput(): React.ReactElement<any>;
-    render(): React.ReactElement<any>;
+    setValue(value: string, e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLElement, MouseEvent>, callback?: () => void): void;
+    handleReset: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    renderClearIcon(prefixCls: string): JSX.Element | null;
+    renderSuffix(prefixCls: string): JSX.Element | null;
+    renderLabeledInput(prefixCls: string, children: React.ReactElement<any>): JSX.Element;
+    renderLabeledIcon(prefixCls: string, children: React.ReactElement<any>): JSX.Element;
+    renderInput(prefixCls: string): JSX.Element;
+    renderComponent: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
+    render(): JSX.Element;
 }
+export default Input;

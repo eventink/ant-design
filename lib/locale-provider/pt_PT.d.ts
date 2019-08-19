@@ -20,9 +20,9 @@ declare const _default: {
         filterTitle: string;
         filterConfirm: string;
         filterReset: string;
-        emptyText: string;
         selectAll: string;
         selectInvert: string;
+        sortTitle: string;
     };
     Modal: {
         okText: string;
@@ -34,19 +34,18 @@ declare const _default: {
         cancelText: string;
     };
     Transfer: {
-        notFoundContent: string;
         searchPlaceholder: string;
         itemUnit: string;
         itemsUnit: string;
-    };
-    Select: {
-        notFoundContent: string;
     };
     Upload: {
         uploading: string;
         removeFile: string;
         uploadError: string;
         previewFile: string;
+    };
+    Empty: {
+        description: string;
     };
 };
 export default _default;

@@ -1,35 +1,34 @@
-/// <reference types="react" />
 import * as React from 'react';
-import { AbstractInputProps } from './Input';
+import { ConfigConsumerProps } from '../config-provider';
 export interface AutoSizeType {
     minRows?: number;
     maxRows?: number;
 }
-export interface TextAreaProps extends AbstractInputProps {
+export declare type HTMLTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+export interface TextAreaProps extends HTMLTextareaProps {
+    prefixCls?: string;
     autosize?: boolean | AutoSizeType;
-    onPressEnter?: React.FormEventHandler<any>;
+    onPressEnter?: React.KeyboardEventHandler<HTMLTextAreaElement>;
 }
 export interface TextAreaState {
     textareaStyles?: React.CSSProperties;
 }
-export declare type HTMLTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
-export default class TextArea extends React.Component<TextAreaProps & HTMLTextareaProps, TextAreaState> {
-    static defaultProps: {
-        prefixCls: string;
-    };
+declare class TextArea extends React.Component<TextAreaProps, TextAreaState> {
     nextFrameActionId: number;
     state: {
         textareaStyles: {};
     };
     private textAreaRef;
     componentDidMount(): void;
-    componentWillReceiveProps(nextProps: TextAreaProps): void;
+    componentDidUpdate(prevProps: TextAreaProps): void;
+    resizeOnNextFrame: () => void;
     focus(): void;
     blur(): void;
     resizeTextarea: () => void;
-    getTextAreaClassName(): any;
     handleTextareaChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
     saveTextAreaRef: (textArea: HTMLTextAreaElement) => void;
+    renderTextArea: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
+export default TextArea;

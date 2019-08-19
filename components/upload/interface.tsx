@@ -7,30 +7,32 @@ export interface HttpRequestHeader {
 }
 
 export interface RcFile extends File {
-  uid: number;
+  uid: string;
+  readonly lastModifiedDate: Date;
+  readonly webkitRelativePath: string;
 }
 
 export interface UploadFile {
-  uid: number;
+  uid: string;
   size: number;
   name: string;
-  filename?: string;
+  fileName?: string;
   lastModified?: number;
   lastModifiedDate?: Date;
   url?: string;
   status?: UploadFileStatus;
   percent?: number;
   thumbUrl?: string;
-  isNotImage?: boolean;
-  originFileObj?: File;
+  originFileObj?: File | Blob;
   response?: any;
   error?: any;
   linkProps?: any;
   type: string;
 }
 
-export interface UploadChangeParam {
-  file: UploadFile;
+export interface UploadChangeParam<T extends object = UploadFile> {
+  // https://github.com/ant-design/ant-design/issues/14420
+  file: T;
   fileList: Array<UploadFile>;
   event?: { percent: number };
 }
@@ -50,30 +52,36 @@ export interface UploadLocale {
 export type UploadType = 'drag' | 'select';
 export type UploadListType = 'text' | 'picture' | 'picture-card';
 
+type PreviewFileHandler = (file: File | Blob) => PromiseLike<string>;
+
 export interface UploadProps {
   type?: UploadType;
   name?: string;
   defaultFileList?: Array<UploadFile>;
   fileList?: Array<UploadFile>;
-  action?: string;
-  data?: Object | ((file: UploadFile) => any);
+  action?: string | ((file: RcFile) => string) | ((file: RcFile) => PromiseLike<string>);
+  directory?: boolean;
+  data?: object | ((file: UploadFile) => object);
   headers?: HttpRequestHeader;
   showUploadList?: boolean | ShowUploadListInterface;
   multiple?: boolean;
   accept?: string;
-  beforeUpload?: (file: RcFile, FileList: RcFile[]) => boolean | PromiseLike<any>;
+  beforeUpload?: (file: RcFile, FileList: RcFile[]) => boolean | PromiseLike<void>;
   onChange?: (info: UploadChangeParam) => void;
   listType?: UploadListType;
   className?: string;
   onPreview?: (file: UploadFile) => void;
-  onRemove?: (file: UploadFile) => void | boolean;
+  onRemove?: (file: UploadFile) => void | boolean | Promise<void | boolean>;
   supportServerRender?: boolean;
   style?: React.CSSProperties;
   disabled?: boolean;
   prefixCls?: string;
-  customRequest?: (option: any) => void;
+  customRequest?: (option: object) => void;
   withCredentials?: boolean;
+  openFileDialogOnClick?: boolean;
   locale?: UploadLocale;
+  id?: string;
+  previewFile?: PreviewFileHandler;
 }
 
 export interface UploadState {
@@ -91,4 +99,5 @@ export interface UploadListProps {
   showRemoveIcon?: boolean;
   showPreviewIcon?: boolean;
   locale: UploadLocale;
+  previewFile?: PreviewFileHandler;
 }

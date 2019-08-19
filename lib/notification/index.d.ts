@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import * as React from 'react';
 export declare type NotificationPlacement = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 export declare type IconType = 'success' | 'info' | 'error' | 'warning';
@@ -11,7 +10,7 @@ export interface ConfigProps {
 }
 export interface ArgsProps {
     message: React.ReactNode;
-    description: React.ReactNode;
+    description?: React.ReactNode;
     btn?: React.ReactNode;
     key?: string;
     onClose?: () => void;
@@ -22,6 +21,10 @@ export interface ArgsProps {
     prefixCls?: string;
     className?: string;
     readonly type?: IconType;
+    onClick?: () => void;
+    top?: number;
+    bottom?: number;
+    getContainer?: () => HTMLElement;
 }
 export interface NotificationApi {
     success(args: ArgsProps): void;

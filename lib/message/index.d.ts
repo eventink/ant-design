@@ -1,5 +1,22 @@
-/// <reference types="react" />
 import * as React from 'react';
+declare type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading';
+export interface ThenableArgument {
+    (val: any): void;
+}
+export interface MessageType {
+    (): void;
+    then: (fill: ThenableArgument, reject: ThenableArgument) => Promise<void>;
+    promise: Promise<void>;
+}
+export interface ArgsProps {
+    content: React.ReactNode;
+    duration: number | null;
+    type: NoticeType;
+    onClose?: () => void;
+    icon?: React.ReactNode;
+}
+declare type ConfigContent = React.ReactNode | string;
+declare type ConfigDuration = number | (() => void);
 export declare type ConfigOnClose = () => void;
 export interface ConfigOptions {
     top?: number;
@@ -7,15 +24,18 @@ export interface ConfigOptions {
     prefixCls?: string;
     getContainer?: () => HTMLElement;
     transitionName?: string;
+    maxCount?: number;
 }
-declare const _default: {
-    info(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
-    success(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
-    error(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
-    warn(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
-    warning(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
-    loading(content: React.ReactNode, duration?: number | (() => void) | undefined, onClose?: ConfigOnClose | undefined): () => void;
+export interface MessageApi {
+    info(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    success(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    error(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    warn(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    warning(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    loading(content: ConfigContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
+    open(args: ArgsProps): MessageType;
     config(options: ConfigOptions): void;
     destroy(): void;
-};
+}
+declare const _default: MessageApi;
 export default _default;

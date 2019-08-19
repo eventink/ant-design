@@ -1,5 +1,5 @@
-/// <reference types="react" />
 import * as React from 'react';
+import { ConfigConsumerProps } from '../config-provider';
 export declare type TabsType = 'line' | 'card' | 'editable-card';
 export declare type TabsPosition = 'top' | 'right' | 'bottom' | 'left';
 export interface TabsProps {
@@ -8,13 +8,13 @@ export interface TabsProps {
     hideAdd?: boolean;
     onChange?: (activeKey: string) => void;
     onTabClick?: Function;
-    onPrevClick?: React.MouseEventHandler<any>;
-    onNextClick?: React.MouseEventHandler<any>;
+    onPrevClick?: React.MouseEventHandler<HTMLElement>;
+    onNextClick?: React.MouseEventHandler<HTMLElement>;
     tabBarExtraContent?: React.ReactNode | null;
     tabBarStyle?: React.CSSProperties;
     type?: TabsType;
     tabPosition?: TabsPosition;
-    onEdit?: (targetKey: string | React.MouseEvent<HTMLElement>, action: any) => void;
+    onEdit?: (targetKey: string | React.MouseEvent<HTMLElement>, action: 'add' | 'remove') => void;
     size?: 'large' | 'default' | 'small';
     style?: React.CSSProperties;
     prefixCls?: string;
@@ -24,6 +24,8 @@ export interface TabsProps {
         tabPane: boolean;
     };
     tabBarGutter?: number;
+    renderTabBar?: (props: TabsProps, DefaultTabBar: React.ComponentClass<any>) => React.ReactElement<any>;
+    destroyInactiveTabPane?: boolean;
 }
 export interface TabPaneProps {
     /** 选项卡头显示文字 */
@@ -33,16 +35,18 @@ export interface TabPaneProps {
     className?: string;
     disabled?: boolean;
     forceRender?: boolean;
+    key?: string;
 }
 export default class Tabs extends React.Component<TabsProps, any> {
     static TabPane: React.ClassicComponentClass<TabPaneProps>;
     static defaultProps: {
-        prefixCls: string;
         hideAdd: boolean;
+        tabPosition: TabsPosition;
     };
-    createNewTab: (targetKey: React.MouseEvent<HTMLElement>) => void;
-    removeTab: (targetKey: string, e: React.MouseEvent<HTMLElement>) => void;
+    removeTab: (targetKey: string, e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     handleChange: (activeKey: string) => void;
+    createNewTab: (targetKey: React.MouseEvent<HTMLElement, MouseEvent>) => void;
     componentDidMount(): void;
+    renderTabs: ({ getPrefixCls }: ConfigConsumerProps) => JSX.Element;
     render(): JSX.Element;
 }
