@@ -3,12 +3,12 @@ order: 0
 title: Ant Design of React
 ---
 
-这里是 Ant Design 的 React 实现，开发和服务于企业级后台产品。
+`antd` 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。
 
 <div class="pic-plus">
   <img width="150" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg">
   <span>+</span>
-  <img width="160" src="https://t.alipayobjects.com/images/rmsweb/T16xRhXkxbXXXXXXXX.svg">
+  <img width="160" src="https://gw.alipayobjects.com/zos/rmsportal/tXlLQhLvkEelMstLyHiN.svg">
 </div>
 
 <style>
@@ -34,9 +34,9 @@ title: Ant Design of React
 
 ## 支持环境
 
-* 现代浏览器和 IE9 及以上（需要 [polyfills](https://ant.design/docs/react/getting-started-cn#兼容性)）。
-* 支持服务端渲染。
-* [Electron](http://electron.atom.io/)
+- 现代浏览器和 IE9 及以上（需要 [polyfills](https://ant.design/docs/react/getting-started-cn#兼容性)）。
+- 支持服务端渲染。
+- [Electron](https://electronjs.org/)
 
 ## 版本
 
@@ -64,8 +64,7 @@ $ yarn add antd
 
 在浏览器中使用 `script` 和 `link` 标签直接引入文件，并使用全局变量 `antd`。
 
-我们在 npm 发布包内的 `antd/dist` 目录下提供了 `antd.js` `antd.css` 以及 `antd.min.js` `antd.min.css`。你也可以通过 [![CDNJS](https://img.shields.io/cdnjs/v/antd.svg?style=flat-square)](https://cdnjs.com/libraries/antd)
- 或 [UNPKG](https://unpkg.com/antd/dist/) 进行下载。
+我们在 npm 发布包内的 `antd/dist` 目录下提供了 `antd.js` `antd.css` 以及 `antd.min.js` `antd.min.css`。你也可以通过 [![CDNJS](https://img.shields.io/cdnjs/v/antd.svg?style=flat-square)](https://cdnjs.com/libraries/antd)，[![](https://data.jsdelivr.com/v1/package/npm/antd/badge)](https://www.jsdelivr.com/package/npm/antd) 或 [UNPKG](https://unpkg.com/antd/dist/) 进行下载。
 
 > **强烈不推荐使用已构建文件**，这样无法按需加载，而且难以获得底层依赖模块的 bug 快速修复支持。
 
@@ -81,55 +80,65 @@ ReactDOM.render(<DatePicker />, mountNode);
 引入样式：
 
 ```jsx
-import 'antd/dist/antd.css';  // or 'antd/dist/antd.less'
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 ```
 
 ### 按需加载
+
+> 注意：antd 默认支持基于 ES module 的 tree shaking，不使用以下插件也会有按需加载的效果。
 
 下面两种方式都可以只加载用到的组件。
 
 - 使用 [babel-plugin-import](https://github.com/ant-design/babel-plugin-import)（推荐）。
 
-   ```js
-   // .babelrc or babel-loader option
-   {
-     "plugins": [
-       ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }] // `style: true` 会加载 less 文件
-     ]
-   }
-   ```
+  ```js
+  // .babelrc or babel-loader option
+  {
+    "plugins": [
+      ["import", {
+        "libraryName": "antd",
+        "libraryDirectory": "es",
+        "style": "css" // `style: true` 会加载 less 文件
+      }]
+    ]
+  }
+  ```
 
-   > 注意：webpack 1 无需设置 `libraryDirectory`。
+  然后只需从 antd 引入模块即可，无需单独引入样式。等同于下面手动引入的方式。
 
-   然后只需从 antd 引入模块即可，无需单独引入样式。等同于下面手动引入的方式。
-
-   ```jsx
-   // babel-plugin-import 会帮助你加载 JS 和 CSS
-   import { DatePicker } from 'antd';
-   ```
+  ```jsx
+  // babel-plugin-import 会帮助你加载 JS 和 CSS
+  import { DatePicker } from 'antd';
+  ```
 
 - 手动引入
 
-   ```jsx
-   import DatePicker from 'antd/lib/date-picker';  // 加载 JS
-   import 'antd/lib/date-picker/style/css';        // 加载 CSS
-   // import 'antd/lib/date-picker/style';         // 加载 LESS
-   ```
+  ```jsx
+  import DatePicker from 'antd/es/date-picker'; // 加载 JS
+  import 'antd/es/date-picker/style/css'; // 加载 CSS
+  // import 'antd/es/date-picker/style';         // 加载 LESS
+  ```
 
 ## 链接
 
-- [首页](http://ant.design/)
+- [首页](https://ant.design/)
 - [组件库](/docs/react/introduce)
-- [Ant Design Pro](http://pro.ant.design/)
+- [Ant Design Pro](https://pro.ant.design/)
 - [更新日志](/changelog)
-- [脚手架市场](http://scaffold.ant.design)
 - [React 底层基础组件](http://react-component.github.io/)
 - [移动端组件](http://mobile.ant.design)
+- [Ant Design 图标](https://github.com/ant-design/ant-design-icons)
+- [Ant Design 色彩](https://github.com/ant-design/ant-design-colors)
+- [Ant Design Pro 布局组件](https://github.com/ant-design/ant-design-pro-layout)
+- [Ant Design Pro 区块集](https://github.com/ant-design/pro-blocks)
+- [Dark Theme](https://github.com/ant-design/ant-design-dark-theme)
+- [首页模板集](https://landing.ant.design)
 - [动效](https://motion.ant.design)
+- [脚手架市场](http://scaffold.ant.design)
 - [设计规范速查手册](https://github.com/ant-design/ant-design/wiki/Ant-Design-%E8%AE%BE%E8%AE%A1%E5%9F%BA%E7%A1%80%E7%AE%80%E7%89%88)
 - [开发者说明](https://github.com/ant-design/ant-design/wiki/Development)
 - [版本发布规则](https://github.com/ant-design/ant-design/wiki/%E8%BD%AE%E5%80%BC%E8%A7%84%E5%88%99%E5%92%8C%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83%E6%B5%81%E7%A8%8B)
-- [常见问题](https://github.com/ant-design/ant-design/wiki/FAQ)
+- [常见问题](/docs/react/faq)
 - [CodeSandbox 模板](https://u.ant.design/codesandbox-repro) for bug reports
 - [Awesome Ant Design](https://github.com/websemantics/awesome-ant-design)
 - [定制主题](/docs/react/customize-theme)

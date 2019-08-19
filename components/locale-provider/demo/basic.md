@@ -13,7 +13,7 @@ title:
 
 Wrap your app with `LocaleProvider`, and apply the corresponding language package.
 
-````jsx
+```jsx
 import { Pagination, LocaleProvider } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 
@@ -26,6 +26,7 @@ const App = () => (
 ReactDOM.render(
   <LocaleProvider locale={zhCN}>
     <App />
-  </LocaleProvider>
-, mountNode);
-````
+  </LocaleProvider>,
+  mountNode,
+);
+```
